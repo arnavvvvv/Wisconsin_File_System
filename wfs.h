@@ -1,5 +1,6 @@
 #include <time.h>
 #include <sys/stat.h>
+#include <stdint.h>
 
 #define BLOCK_SIZE (512)
 #define MAX_NAME   (28)
@@ -34,6 +35,22 @@ struct wfs_sb {
 };
 
 // Inode
+// Color tag palette: stored compactly as a uint8_t enum code
+typedef enum {
+    WFS_COLOR_NONE = 0,
+    WFS_COLOR_RED,
+    WFS_COLOR_GREEN,
+    WFS_COLOR_BLUE,
+    WFS_COLOR_YELLOW,
+    WFS_COLOR_MAGENTA,
+    WFS_COLOR_CYAN,
+    WFS_COLOR_WHITE,
+    WFS_COLOR_BLACK,
+    WFS_COLOR_ORANGE,
+    WFS_COLOR_PURPLE,
+    WFS_COLOR_GRAY,
+    WFS_COLOR_MAX
+} wfs_color_t;
 struct wfs_inode {
     int     num;      /* Inode number */
     mode_t  mode;     /* File type and mode */
@@ -45,6 +62,12 @@ struct wfs_inode {
     time_t atim;      /* Time of last access */
     time_t mtim;      /* Time of last modification */
     time_t ctim;      /* Time of last status change */
+
+    /* Optional file color tag (persisted) as palette code.
+     *  - WFS_COLOR_NONE means no color (default)
+     *  - Other values correspond to a fixed palette (see wfs_color_t)
+     */
+    uint8_t color;
 
     off_t blocks[N_BLOCKS];
 };
@@ -63,7 +86,7 @@ int dentry_to_num(char* name, struct wfs_inode* inode);
 void free_block(off_t blk);
 void free_inode(struct wfs_inode* inode);
 struct wfs_inode* retrieve_inode(int num);
-off_t allocate_data_block();
-struct wfs_inode* allocate_inode();
+off_t allocate_data_block(void);
+struct wfs_inode* allocate_inode(void);
 void fillin_inode(struct wfs_inode* inode, mode_t mode);
-void create_root_dir();
+void create_root_dir(void);

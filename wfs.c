@@ -11,12 +11,67 @@
 #include <fuse.h>
 #include <assert.h>
 #include <string.h>
+#include <ctype.h>
 #include "wfs.h"
 
 #define MMAP_PTR(offset) ((char*)mregion + offset)
 
 void* mregion;
 int wfs_error;
+
+// =========================
+// Color tag helpers (enum-based palette)
+// =========================
+struct color_entry { const char *name; uint8_t code; };
+static const struct color_entry color_table[] = {
+    {"none",    WFS_COLOR_NONE},
+    {"red",     WFS_COLOR_RED},
+    {"green",   WFS_COLOR_GREEN},
+    {"blue",    WFS_COLOR_BLUE},
+    {"yellow",  WFS_COLOR_YELLOW},
+    {"magenta", WFS_COLOR_MAGENTA},
+    {"cyan",    WFS_COLOR_CYAN},
+    {"white",   WFS_COLOR_WHITE},
+    {"black",   WFS_COLOR_BLACK},
+    {"orange",  WFS_COLOR_ORANGE},
+    {"purple",  WFS_COLOR_PURPLE},
+    {"gray",    WFS_COLOR_GRAY},
+};
+
+static int parse_color_name(const char *s, uint8_t *out_code) {
+    if (!s || !out_code) return 0;
+    char buf[32]; size_t n = 0;
+    while (s[n] && n + 1 < sizeof(buf)) { buf[n] = (char)tolower((unsigned char)s[n]); n++; }
+    buf[n] = '\0';
+    for (size_t i = 0; i < sizeof(color_table)/sizeof(color_table[0]); i++) {
+        if (strcmp(buf, color_table[i].name) == 0) { *out_code = color_table[i].code; return 1; }
+    }
+    return 0;
+}
+
+/* Return the color name decorated with ANSI escape codes so terminals
+ * show the name itself in that color. Note: this means any consumer
+ * of the xattr will receive the escape sequences. If you want raw
+ * names for scripting, keep a separate helper returning undecorated
+ * names. */
+static const char* color_name_from_code(uint8_t code) {
+    static const char* decorated[] = {
+        /* WFS_COLOR_NONE  */ "none",
+        /* WFS_COLOR_RED   */ "\033[31mred\033[0m",
+        /* WFS_COLOR_GREEN */ "\033[32mgreen\033[0m",
+        /* WFS_COLOR_BLUE  */ "\x1B[34mblue\x1B[0m",
+        /* WFS_COLOR_YELLOW*/ "\033[33myellow\033[0m",
+        /* WFS_COLOR_MAGENTA*/"\033[35mmagenta\033[0m",
+        /* WFS_COLOR_CYAN  */ "\033[36mcyan\033[0m",
+        /* WFS_COLOR_WHITE */ "\033[37mwhite\033[0m",
+        /* WFS_COLOR_BLACK */ "\033[30mblack\033[0m",
+        /* WFS_COLOR_ORANGE*/ "\033[38;5;208morange\033[0m",
+        /* WFS_COLOR_PURPLE*/ "\033[35mpurple\033[0m",
+        /* WFS_COLOR_GRAY  */ "\033[90mgray\033[0m",
+    };
+    if (code < WFS_COLOR_MAX) return decorated[code];
+    return "none";
+}
 
 // presume inode is a directory
 // return inode number corresponding to dentry name
@@ -131,6 +186,7 @@ void fillin_inode(struct wfs_inode* inode, mode_t mode) {
     inode->atim = t.tv_sec;
     inode->mtim = t.tv_sec;
     inode->ctim = t.tv_sec;
+    inode->color = WFS_COLOR_NONE; // default: no color
 }
 
 int wfs_mkdir(const char* path, mode_t mode) {
@@ -177,6 +233,65 @@ int wfs_getattr(const char* path, struct stat *statbuf) {
     statbuf->st_nlink = inode->nlinks;
 
     free(searchpath);
+    return 0;
+}
+
+// =========================
+// xattr: expose color tag as "user.color"
+// =========================
+static int wfs_setxattr(const char *path, const char *name, const char *value, size_t size, int flags) {
+    (void)flags;
+    if (!path || !name) return -EINVAL;
+    if (strcmp(name, "user.color") != 0) return -EOPNOTSUPP;
+    struct wfs_inode *inode; char *p = strdup(path);
+    if (get_inode_from_path(p, &inode) < 0) { free(p); return wfs_error; }
+    // value may not be NUL-terminated; ensure it is
+    char valbuf[64];
+    size_t n = size < sizeof(valbuf)-1 ? size : sizeof(valbuf)-1;
+    if (value && n > 0) memcpy(valbuf, value, n);
+    valbuf[n] = '\0';
+
+    uint8_t code;
+    if (!parse_color_name(valbuf, &code)) { free(p); return -EINVAL; }
+    inode->color = code;
+    inode->ctim = time(NULL);
+    free(p);
+    return 0;
+}
+
+static int wfs_getxattr(const char *path, const char *name, char *value, size_t size) {
+    if (!path || !name) return -EINVAL;
+    if (strcmp(name, "user.color") != 0) return -EOPNOTSUPP;
+    struct wfs_inode *inode; char *p = strdup(path);
+    if (get_inode_from_path(p, &inode) < 0) { free(p); return wfs_error; }
+    const char *name_out = color_name_from_code(inode->color);
+    size_t need = strlen(name_out) + 1;
+    if (size == 0 || value == NULL) { free(p); return (int)need; }
+    if (size < need) { free(p); return -ERANGE; }
+    memcpy(value, name_out, need);
+    free(p);
+    return (int)need;
+}
+
+static int wfs_listxattr(const char *path, char *list, size_t size) {
+    (void)path; // we always expose user.color
+    const char *attr = "user.color";
+    size_t need = strlen(attr) + 1; // null-terminated list entry
+    if (size == 0 || list == NULL) return (int)need;
+    if (size < need) return -ERANGE;
+    memcpy(list, attr, need);
+    return (int)need;
+}
+
+static int wfs_removexattr(const char *path, const char *name) {
+    printf("wfs_removexattr: %s %s\n", path, name);
+    if (!path || !name) return -EINVAL;
+    if (strcmp(name, "user.color") != 0) return -EOPNOTSUPP;
+    struct wfs_inode *inode; char *p = strdup(path);
+    if (get_inode_from_path(p, &inode) < 0) { free(p); return wfs_error; }
+    inode->color = 0; // none
+    inode->ctim = time(NULL);
+    free(p);
     return 0;
 }
 
@@ -440,6 +555,10 @@ static struct fuse_operations wfs_oper = {
   .readdir = wfs_readdir,
   .statfs = wfs_statfs,
   .utimens = wfs_utimens,
+    .setxattr = wfs_setxattr,
+    .getxattr = wfs_getxattr,
+    .listxattr = wfs_listxattr,
+    .removexattr = wfs_removexattr,
 };
 
 void free_bitmap(uint32_t position, uint32_t* bitmap) {
@@ -503,7 +622,7 @@ ssize_t allocate_block(uint32_t* bitmap, size_t len) {
     return -1; // no free blocks found
 }
 
-off_t allocate_data_block() {
+off_t allocate_data_block(void) {
     struct wfs_sb* sb = (struct wfs_sb*)mregion;
     off_t blknum = allocate_block((uint32_t*)MMAP_PTR(sb->d_bitmap_ptr),
                                   sb->num_data_blocks / 32);
@@ -514,7 +633,7 @@ off_t allocate_data_block() {
     return sb->d_blocks_ptr + BLOCK_SIZE * blknum;
 }
 
-struct wfs_inode* allocate_inode() {
+struct wfs_inode* allocate_inode(void) {
     struct wfs_sb* sb = (struct wfs_sb*)mregion;
     off_t blknum = allocate_block((uint32_t*)MMAP_PTR(sb->i_bitmap_ptr),
                                   sb->num_inodes / 32);
