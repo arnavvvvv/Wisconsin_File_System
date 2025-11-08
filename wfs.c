@@ -73,16 +73,57 @@ static const char* color_name_from_code(uint8_t code) {
     return "none";
 }
 
+static const char* get_ansi_code(uint8_t color) {
+    static const char* codes[] = {
+        [WFS_COLOR_NONE]    = "",
+        [WFS_COLOR_RED]     = "\033[31m",
+        [WFS_COLOR_GREEN]   = "\033[32m",
+        [WFS_COLOR_BLUE]    = "\033[34m",
+        [WFS_COLOR_YELLOW]  = "\033[33m",
+        [WFS_COLOR_MAGENTA] = "\033[35m",
+        [WFS_COLOR_CYAN]    = "\033[36m",
+        [WFS_COLOR_WHITE]   = "\033[37m",
+        [WFS_COLOR_BLACK]   = "\033[30m",
+        [WFS_COLOR_ORANGE]  = "\033[38;5;208m",
+        [WFS_COLOR_PURPLE]  = "\033[35m",
+        [WFS_COLOR_GRAY]    = "\033[90m",
+    };
+    if (color < WFS_COLOR_MAX) return codes[color];
+    return "";
+}
+
+static void strip_ansi_codes(const char* path, char* clean_path_out, size_t out_len) {
+    const char* src = path;
+    char* dst = clean_path_out;
+    char* const end = clean_path_out + out_len - 1; // leave room for NUL
+
+    while (*src && dst < end) {
+        if (*src == '\033') {
+            // Skip ANSI escape sequence: \033[...m
+            src++;
+            if (*src == '[') {
+                src++;
+                while (*src && *src != 'm') src++;
+                if (*src == 'm') src++;
+            }
+        } else {
+            *dst++ = *src++;
+        }
+    }
+    *dst = '\0';
+}
 // presume inode is a directory
 // return inode number corresponding to dentry name
 int dentry_to_num(char* name, struct wfs_inode* inode) {
+    char clean_name[1024]; // Use a local, stack-allocated buffer
+    strip_ansi_codes(name, clean_name, sizeof(clean_name));
     size_t sz = inode->size;
     struct wfs_dentry* dent;
     
     for (off_t off = 0; off < sz; off += sizeof(struct wfs_dentry)) {
         dent = (struct wfs_dentry*)data_offset(inode, off, 0);
 
-        if (dent->num != 0 && !strcmp(dent->name, name)) { // match
+        if (dent->num != 0 && !strcmp(dent->name, clean_name)) { // match
             return dent->num;
         }
     }
@@ -113,7 +154,12 @@ int get_inode_rec(struct wfs_inode* enclosing, char* path, struct wfs_inode** in
 
 int get_inode_from_path(char* path, struct wfs_inode** inode) {
     // all paths must start at root, thus path+1 is safe
-    return get_inode_rec(retrieve_inode(0), path+1, inode);
+    char clean[1024]; // Use a local, stack-allocated buffer
+    strip_ansi_codes(path, clean, sizeof(clean));
+    char* clean_copy = strdup(clean);
+    int result = get_inode_rec(retrieve_inode(0), clean_copy + 1, inode);
+    free(clean_copy);
+    return result;
 }
 
 int wfs_mknod(const char* path, mode_t mode, dev_t dev) {
@@ -143,6 +189,11 @@ int wfs_mknod(const char* path, mode_t mode, dev_t dev) {
 }
 
 int add_dentry(struct wfs_inode* parent, int num, char* name) {
+
+    // Make sure we only store the clean name on disk
+    char clean_name[MAX_NAME];
+    strip_ansi_codes(name, clean_name, sizeof(clean_name));
+
     // insert dentry if there is an empty slot
     int numblks = parent->size / BLOCK_SIZE;
     struct wfs_dentry* dent;
@@ -370,9 +421,9 @@ int wfs_read(const char* path, char *buf, size_t length, off_t offset, struct fu
     }
 
     free(searchpath);
-    struct timespec now;
-    clock_gettime(CLOCK_REALTIME, &now);
-    inode->atim = now.tv_sec;
+    // struct timespec now;
+    // clock_gettime(CLOCK_REALTIME, &now);
+    // inode->atim = now.tv_sec;
 // inode->ctim = now.tv_sec; // optional
 
     return have_read;
@@ -428,6 +479,24 @@ int wfs_readdir(const char* path, void* buf, fuse_fill_dir_t filler, off_t offse
         return wfs_error;
     }
 
+    // Detect if caller is 'ls' by checking process name
+    struct fuse_context *ctx = fuse_get_context();
+    int is_ls = 0;
+    if (ctx) {
+        char comm_path[64], comm_name[256];
+        snprintf(comm_path, sizeof(comm_path), "/proc/%d/comm", ctx->pid);
+        FILE *fp = fopen(comm_path, "r");
+        if (fp) {
+            if (fgets(comm_name, sizeof(comm_name), fp)) {
+                // Remove trailing newline
+                comm_name[strcspn(comm_name, "\n")] = '\0';
+                printf("DEBUG: comm_name = %s\n", comm_name);
+                is_ls = (strcmp(comm_name, "ls") == 0);
+            }
+            fclose(fp);
+        }
+    }
+    printf("DEBUG: is_ls = %d\n", is_ls); 
     size_t sz = inode->size;
     struct wfs_dentry* dent;
         
@@ -435,7 +504,17 @@ int wfs_readdir(const char* path, void* buf, fuse_fill_dir_t filler, off_t offse
         dent = (struct wfs_dentry*)data_offset(inode, off, 0);
 
         if (dent->num != 0) {
-            filler(buf, dent->name, NULL, 0);
+            struct wfs_inode *file_inode = retrieve_inode(dent->num);
+            printf("DEBUG: file %s, color = %d\n", dent->name, file_inode ? file_inode->color : -1);
+            if (is_ls && file_inode && file_inode->color != WFS_COLOR_NONE) {
+                char colored_name[MAX_NAME + 64];
+                snprintf(colored_name, sizeof(colored_name), "%s%s\033[0m",
+                         get_ansi_code(file_inode->color), dent->name);
+                printf("DEBUG: returning colored name: %s\n", colored_name);
+                filler(buf, colored_name, NULL, 0);
+            } else {
+                filler(buf, dent->name, NULL, 0);
+            }
         }
     }
 
