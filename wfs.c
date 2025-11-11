@@ -99,15 +99,13 @@ static void strip_ansi_codes(const char* path, char* clean_path_out, size_t out_
 // presume inode is a directory
 // return inode number corresponding to dentry name
 int dentry_to_num(char* name, struct wfs_inode* inode) {
-    char clean_name[1024]; // Use a local, stack-allocated buffer
-    strip_ansi_codes(name, clean_name, sizeof(clean_name));
     size_t sz = inode->size;
     struct wfs_dentry* dent;
     
     for (off_t off = 0; off < sz; off += sizeof(struct wfs_dentry)) {
         dent = (struct wfs_dentry*)data_offset(inode, off, 0);
 
-        if (dent->num != 0 && !strcmp(dent->name, clean_name)) { // match
+        if (dent->num != 0 && !strcmp(dent->name, name)) { // match
             return dent->num;
         }
     }
@@ -173,10 +171,6 @@ int wfs_mknod(const char* path, mode_t mode, dev_t dev) {
 }
 
 int add_dentry(struct wfs_inode* parent, int num, char* name) {
-
-    // Make sure we only store the clean name on disk
-    char clean_name[MAX_NAME];
-    strip_ansi_codes(name, clean_name, sizeof(clean_name));
 
     // insert dentry if there is an empty slot
     int numblks = parent->size / BLOCK_SIZE;
@@ -622,10 +616,10 @@ static struct fuse_operations wfs_oper = {
   .write = wfs_write,
   .readdir = wfs_readdir,
   .statfs = wfs_statfs,
-    .setxattr = wfs_setxattr,
-    .getxattr = wfs_getxattr,
-    .listxattr = wfs_listxattr,
-    .removexattr = wfs_removexattr,
+  .setxattr = wfs_setxattr,
+  .getxattr = wfs_getxattr,
+  .listxattr = wfs_listxattr,
+  .removexattr = wfs_removexattr,
 };
 
 void free_bitmap(uint32_t position, uint32_t* bitmap) {
