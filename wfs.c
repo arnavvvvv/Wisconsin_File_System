@@ -54,42 +54,25 @@ static int parse_color_name(const char *s, uint8_t *out_code) {
  * of the xattr will receive the escape sequences. If you want raw
  * names for scripting, keep a separate helper returning undecorated
  * names. */
-static const char* color_name_from_code(uint8_t code) {
-    static const char* decorated[] = {
-        /* WFS_COLOR_NONE  */ "none",
-        /* WFS_COLOR_RED   */ "\033[31mred\033[0m",
-        /* WFS_COLOR_GREEN */ "\033[32mgreen\033[0m",
-        /* WFS_COLOR_BLUE  */ "\x1B[34mblue\x1B[0m",
-        /* WFS_COLOR_YELLOW*/ "\033[33myellow\033[0m",
-        /* WFS_COLOR_MAGENTA*/"\033[35mmagenta\033[0m",
-        /* WFS_COLOR_CYAN  */ "\033[36mcyan\033[0m",
-        /* WFS_COLOR_WHITE */ "\033[37mwhite\033[0m",
-        /* WFS_COLOR_BLACK */ "\033[30mblack\033[0m",
-        /* WFS_COLOR_ORANGE*/ "\033[38;5;208morange\033[0m",
-        /* WFS_COLOR_PURPLE*/ "\033[35mpurple\033[0m",
-        /* WFS_COLOR_GRAY  */ "\033[90mgray\033[0m",
-    };
-    if (code < WFS_COLOR_MAX) return decorated[code];
-    return "none";
-}
+typedef struct { const char *ansi; const char *name; } wfs_color_info;
 
-static const char* get_ansi_code(uint8_t color) {
-    static const char* codes[] = {
-        [WFS_COLOR_NONE]    = "",
-        [WFS_COLOR_RED]     = "\033[31m",
-        [WFS_COLOR_GREEN]   = "\033[32m",
-        [WFS_COLOR_BLUE]    = "\033[34m",
-        [WFS_COLOR_YELLOW]  = "\033[33m",
-        [WFS_COLOR_MAGENTA] = "\033[35m",
-        [WFS_COLOR_CYAN]    = "\033[36m",
-        [WFS_COLOR_WHITE]   = "\033[37m",
-        [WFS_COLOR_BLACK]   = "\033[30m",
-        [WFS_COLOR_ORANGE]  = "\033[38;5;208m",
-        [WFS_COLOR_PURPLE]  = "\033[35m",
-        [WFS_COLOR_GRAY]    = "\033[90m",
+static inline const wfs_color_info* wfs_color_from_code(uint8_t code) {
+    static const wfs_color_info table[] = {
+        [WFS_COLOR_NONE]    = { "",               "none"    },
+        [WFS_COLOR_RED]     = { "\033[31m",       "red"     },
+        [WFS_COLOR_GREEN]   = { "\033[32m",       "green"   },
+        [WFS_COLOR_BLUE]    = { "\033[34m",       "blue"    },
+        [WFS_COLOR_YELLOW]  = { "\033[33m",       "yellow"  },
+        [WFS_COLOR_MAGENTA] = { "\033[35m",       "magenta" },
+        [WFS_COLOR_CYAN]    = { "\033[36m",       "cyan"    },
+        [WFS_COLOR_WHITE]   = { "\033[37m",       "white"   },
+        [WFS_COLOR_BLACK]   = { "\033[30m",       "black"   },
+        [WFS_COLOR_ORANGE]  = { "\033[38;5;208m", "orange"  },
+        [WFS_COLOR_PURPLE]  = { "\033[35m",       "purple"  },
+        [WFS_COLOR_GRAY]    = { "\033[90m",       "gray"    },
     };
-    if (color < WFS_COLOR_MAX) return codes[color];
-    return "";
+    if (code < WFS_COLOR_MAX) return &table[code];
+    return &table[WFS_COLOR_NONE];
 }
 
 static void strip_ansi_codes(const char* path, char* clean_path_out, size_t out_len) {
@@ -315,11 +298,14 @@ static int wfs_getxattr(const char *path, const char *name, char *value, size_t 
     if (strcmp(name, "user.color") != 0) return -EOPNOTSUPP;
     struct wfs_inode *inode; char *p = strdup(path);
     if (get_inode_from_path(p, &inode) < 0) { free(p); return wfs_error; }
-    const char *name_out = color_name_from_code(inode->color);
+
+    const wfs_color_info *ci = wfs_color_from_code(inode->color);
+    const char *name_out = ci->name;
     size_t need = strlen(name_out) + 1;
     if (size == 0 || value == NULL) { free(p); return (int)need; }
     if (size < need) { free(p); return -ERANGE; }
     memcpy(value, name_out, need);
+
     free(p);
     return (int)need;
 }
@@ -507,9 +493,10 @@ int wfs_readdir(const char* path, void* buf, fuse_fill_dir_t filler, off_t offse
             struct wfs_inode *file_inode = retrieve_inode(dent->num);
             printf("DEBUG: file %s, color = %d\n", dent->name, file_inode ? file_inode->color : -1);
             if (is_ls && file_inode && file_inode->color != WFS_COLOR_NONE) {
+                const wfs_color_info *ci = wfs_color_from_code(file_inode->color);
                 char colored_name[MAX_NAME + 64];
                 snprintf(colored_name, sizeof(colored_name), "%s%s\033[0m",
-                         get_ansi_code(file_inode->color), dent->name);
+                         ci->ansi, dent->name);
                 printf("DEBUG: returning colored name: %s\n", colored_name);
                 filler(buf, colored_name, NULL, 0);
             } else {
