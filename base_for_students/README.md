@@ -14,17 +14,34 @@ Welcome to the mini WFS filesystem project. You will build a small, block-based 
 ```
 
 ## Build & Run Quick Start
-```bash
-cd starter
-make               # builds ./wfs and ../mkfs
-./mkfs -d ../disk.img -i 96 -b 200   # create a fresh disk (choose inode/data block counts)
-mkdir -p mnt
-./wfs ../disk.img -s mnt             # mount (foreground)
-# in another shell: interact (touch files, etc.)
-├── mkfs.c              # PROVIDED: image formatter; do not modify (compile and run to create image)
-fusermount -u mnt                    # unmount when done
+
+To help you run your filesystem, we provided several scripts: 
+
+- `create_disk.sh` creates a file named `disk` with size 1MB whose content is zeroed. You can use this file as your disk image. We may test your filesystem with images of different sizes, so please do not assume the image is always 1MB.
+- `umount.sh` unmounts a mount point whose path is specified in the first argument. 
+- `Makefile` is a template makefile used to compile your code. It will also be used for grading. Please make sure your code can be compiled using the commands in this makefile. 
+
+A typical way to compile and launch your filesystem is: 
+
+```sh
+$ make
+$ ./create_disk.sh                 # creates file `disk.img`
+$ ./mkfs -d disk.img -i 32 -b 200  # initialize `disk.img`
+$ mkdir mnt
+$ ./wfs disk.img -f -s mnt             # mount. -f runs FUSE in foreground
 ```
-Use `-s` (single-threaded) during development for simpler debugging (easier to reason about time updates and avoid races). Later you can try multi-threaded mode once correctness is solid.
+
+You should be able to interact with your filesystem once you mount it: 
+
+```sh
+$ stat mnt
+$ mkdir mnt/a
+$ stat mnt/a
+$ mkdir mnt/a/b
+$ ls mnt
+$ echo asdf > mnt/x
+$ cat mnt/x
+```
 
 ## Disk Layout (On-disk)
 ```
