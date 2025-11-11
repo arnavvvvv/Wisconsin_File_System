@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-TEST_DIR=/home/yurun_yuan/project7/p7/tests
+TEST_DIR=/cs537-projects/p6-dev/tests
 
 dd if=/dev/zero of=disk.img bs=1M count=1
 

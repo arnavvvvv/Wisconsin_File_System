@@ -12,6 +12,7 @@
 #include <assert.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 #include "wfs.h"
 
 #define MMAP_PTR(offset) ((char*)mregion + offset)
@@ -189,6 +190,9 @@ int add_dentry(struct wfs_inode* parent, int num, char* name) {
             dent->num = num;
             strncpy(dent->name, name, MAX_NAME);
             parent->nlinks += 1;
+            // update directory mtime/ctime because its entries changed
+            struct timespec now; clock_gettime(CLOCK_REALTIME, &now);
+            parent->mtim = now.tv_sec; parent->ctim = now.tv_sec;
             return 0;
         }
         offset += sizeof(struct wfs_dentry);
@@ -204,6 +208,9 @@ int add_dentry(struct wfs_inode* parent, int num, char* name) {
     strncpy(dent->name, name, MAX_NAME);
     parent->nlinks += 1;
     parent->size += BLOCK_SIZE;
+    // directory grew: update mtime/ctime
+    struct timespec now; clock_gettime(CLOCK_REALTIME, &now);
+    parent->mtim = now.tv_sec; parent->ctim = now.tv_sec;
 
     return 0;
 }
@@ -345,6 +352,9 @@ int remove_dentry(struct wfs_inode* inode, int inum) {
         
         if (dent->num == inum) { // match
             dent->num = 0;
+            // directory entries changed: update mtime/ctime
+            struct timespec now; clock_gettime(CLOCK_REALTIME, &now);
+            inode->mtim = now.tv_sec; inode->ctim = now.tv_sec;
             return 0;
         }
     }
@@ -407,9 +417,11 @@ int wfs_read(const char* path, char *buf, size_t length, off_t offset, struct fu
     }
 
     free(searchpath);
-    // struct timespec now;
-    // clock_gettime(CLOCK_REALTIME, &now);
-    // inode->atim = now.tv_sec;
+    // Update atime only if we actually read some bytes (POSIX allows updating on any access; this avoids pure EOF bumps)
+    if (have_read > 0) {
+        struct timespec now; clock_gettime(CLOCK_REALTIME, &now);
+        inode->atim = now.tv_sec;
+    }
 // inode->ctim = now.tv_sec; // optional
 
     return have_read;
@@ -446,6 +458,9 @@ int wfs_write(const char *path, const char *buf, size_t length, off_t offset, st
     }
 
     inode->size += newdatalen > 0 ? newdatalen : 0;
+    // Writing updates mtime and ctime
+    struct timespec now; clock_gettime(CLOCK_REALTIME, &now);
+    inode->mtim = now.tv_sec; inode->ctim = now.tv_sec;
     free(searchpath);
     return have_written;
 }
@@ -506,6 +521,14 @@ int wfs_readdir(const char* path, void* buf, fuse_fill_dir_t filler, off_t offse
     }
 
     free(searchpath);
+    // Reading a directory updates its atime
+    struct wfs_inode* dir_inode;
+    char* p2 = strdup(path);
+    if (get_inode_from_path(p2, &dir_inode) == 0) {
+        struct timespec now; clock_gettime(CLOCK_REALTIME, &now);
+        dir_inode->atim = now.tv_sec;
+    }
+    free(p2);
     return 0;
 }
 
@@ -544,6 +567,9 @@ int wfs_unlink(const char* path)
     remove_dentry(parent_inode, inode->num);
 
     // free inode
+    // Update parent's ctime/mtime already handled in remove_dentry; set inode's ctime to now before freeing (for completeness if observed)
+    struct timespec now; clock_gettime(CLOCK_REALTIME, &now);
+    inode->ctim = now.tv_sec;
     free_inode(inode);
 
     free(base);
@@ -554,6 +580,7 @@ int wfs_unlink(const char* path)
 int wfs_rmdir(const char *path)
 {
     printf("wfs_rmdir: %s\n", path);
+    // wfs_unlink updates parent directory times; rmdir should also adjust parent atime (access) minimally handled by getattr/read elsewhere
     wfs_unlink(path);
     return 0;
 }
@@ -585,31 +612,6 @@ static int wfs_statfs(const char *path, struct statvfs *st) {
     return 0;
 }
 
-int wfs_utimens(const char *path, const struct timespec tv[2]) {
-    struct wfs_inode* inode;
-    char* searchpath = strdup(path);
-    if (get_inode_from_path(searchpath, &inode) < 0) {
-        free(searchpath);
-        return wfs_error;
-    }
-
-    // tv[0] = atime, tv[1] = mtime
-    if (tv) {
-        inode->atim = tv[0].tv_sec;
-        inode->mtim = tv[1].tv_sec;
-    } else {
-        struct timespec now;
-        clock_gettime(CLOCK_REALTIME, &now);
-        inode->atim = inode->mtim = now.tv_sec;
-    }
-    inode->ctim = time(NULL); // metadata changed now
-
-    free(searchpath);
-    return 0;
-}
-
-
-
 static struct fuse_operations wfs_oper = {
   .getattr = wfs_getattr,
   .mknod = wfs_mknod,
@@ -620,7 +622,6 @@ static struct fuse_operations wfs_oper = {
   .write = wfs_write,
   .readdir = wfs_readdir,
   .statfs = wfs_statfs,
-  .utimens = wfs_utimens,
     .setxattr = wfs_setxattr,
     .getxattr = wfs_getxattr,
     .listxattr = wfs_listxattr,

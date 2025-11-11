@@ -66,6 +66,7 @@ int wfs_mkfs(char* path, int inodes, int blocks) {
     inode.atim = t.tv_sec;
     inode.mtim = t.tv_sec;
     inode.ctim = t.tv_sec;
+    inode.color = WFS_COLOR_NONE; // default: no color
 
     // set bitmap
     uint32_t bit = 0x1;

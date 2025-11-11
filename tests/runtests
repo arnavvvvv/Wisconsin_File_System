@@ -30,7 +30,7 @@ MKFS_TESTS = [0, 1]
 READONLY_TESTS = [2]
 
 # tests on new image
-NEW_IMAGE_TESTS = list(range(3, 20))
+NEW_IMAGE_TESTS = list(range(3, 28))
 
 special_tests = {
     "17": {
