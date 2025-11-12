@@ -84,45 +84,11 @@ Deliverables:
 Checklist:
 - File spanning multiple blocks returns consistent content.
 
-### Part 2 – Show me the Big Picture (statfs)
-Goal: Report aggregate filesystem statistics.
-Implement `statfs()`:
-- `f_blocks` = total data block capacity.
-- `f_files` = total inode capacity.
-- `f_bfree`/`f_bavail` = number of free data blocks.
+**[Part 1 - Show me the Big Picture (statfs)](instructions/01_Show_me_the_Big_Picture.md)**
 
-Use bitmap popcount to calculate used/free. After allocations, free counts should drop.
+**[Part 2 - Tick Tok Tick Tok (File Times)](instructions/02_Tick_Tock_Tick_Tock.md)**
 
-- Creating files reduces `f_ffree`; writing allocating blocks reduces `f_bfree`.
-
-### Part 3 – Tick Tok Tick Tok (File Times)
-Extend your inode with three timestamps: `atim` (last access), `mtim` (last content modification), and `ctim` (last metadata/status change). Keep them consistent with familiar POSIX behavior so `stat` and friends look reasonable.
-
-What’s expected:
-- Creation: initialize all three to “now” when a file or directory is first made.
-- Reporting: `getattr` returns these values; it never changes them.
-- Reading: when file contents are actually read, advance the file’s access time.
-- Listing directories: after producing a directory listing, advance that directory’s access time.
-- Writing: when file contents change, advance modification time; metadata-affecting operations should advance change time.
-- Directory entry changes: when you add or remove a child, the parent directory’s modification and change times should advance.
-- Removal: parent directory times should reflect the change; it’s reasonable to also advance the removed object’s change time during teardown.
-
-Hints
-- Place time updates where you’re certain the operation succeeded to avoid spurious changes.
-- Keep behavior uniform across similar code paths (e.g., all writes update the same set of times).
-
-Sanity checks
-- Immediately after creation, the three times match.
-- A read followed by a write shows access time advancing on the read, and modification/change times advancing on the write.
-- Listing a directory advances that directory’s access time; creating a child advances its modification/change times.
-
-### Part 4 – Colour Colour which Colour do you choose? (xattrs + Colored ls)
-Add a simple per-file “color” tag and surface it via an extended attribute. Show colored names in human-facing listings without baking escape codes into the on-disk names.
-
-Guidance
-- Store a compact palette code in each inode (0 = none). Expose it through the `user.color` xattr: set/get/list/remove.
-- When listing, render names with color only for `ls`; programmatic consumers should see plain names.
-- Treat changing color as a metadata update (consider the timestamp it should affect).
+**[Part 3 - Colour Colour which Colour do you choose? (xattrs + Colored ls)](instructions/03_Colour_Colour_which_Colour_do_you_choose.md)**
 
 ## Implementation Guidance
 
