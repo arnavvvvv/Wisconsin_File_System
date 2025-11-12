@@ -264,7 +264,6 @@ static int wfs_statfs(const char* path, struct statvfs* st){ (void)path; /* TODO
 /* TODO PART 4: xattr user.color + colored names when process name == "ls" */
 static int wfs_setxattr(const char* path, const char* name, const char* value, size_t size, int flags){ (void)path;(void)name;(void)value;(void)size;(void)flags; return -EOPNOTSUPP; }
 static int wfs_getxattr(const char* path, const char* name, char* value, size_t size){ (void)path;(void)name;(void)value;(void)size; return -EOPNOTSUPP; }
-static int wfs_listxattr(const char* path, char* list, size_t size){ (void)path;(void)list;(void)size; return 0; }
 static int wfs_removexattr(const char* path, const char* name){ (void)path;(void)name; return -EOPNOTSUPP; }
 
 static struct fuse_operations wfs_ops = {
@@ -279,7 +278,6 @@ static struct fuse_operations wfs_ops = {
     .statfs  = wfs_statfs,
     .setxattr = wfs_setxattr,
     .getxattr = wfs_getxattr,
-    .listxattr = wfs_listxattr,
     .removexattr = wfs_removexattr,
 };
 

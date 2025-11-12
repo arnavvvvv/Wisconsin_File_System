@@ -311,16 +311,6 @@ static int wfs_getxattr(const char *path, const char *name, char *value, size_t 
     return (int)need;
 }
 
-static int wfs_listxattr(const char *path, char *list, size_t size) {
-    (void)path; // we always expose user.color
-    const char *attr = "user.color";
-    size_t need = strlen(attr) + 1; // null-terminated list entry
-    if (size == 0 || list == NULL) return (int)need;
-    if (size < need) return -ERANGE;
-    memcpy(list, attr, need);
-    return (int)need;
-}
-
 static int wfs_removexattr(const char *path, const char *name) {
     printf("wfs_removexattr: %s %s\n", path, name);
     if (!path || !name) return -EINVAL;
@@ -606,7 +596,7 @@ static int wfs_statfs(const char *path, struct statvfs *st) {
     return 0;
 }
 
-static struct fuse_operations wfs_oper = {
+static struct fuse_operations wfs_ops = {
   .getattr = wfs_getattr,
   .mknod = wfs_mknod,
   .mkdir = wfs_mkdir,
@@ -618,7 +608,6 @@ static struct fuse_operations wfs_oper = {
   .statfs = wfs_statfs,
   .setxattr = wfs_setxattr,
   .getxattr = wfs_getxattr,
-  .listxattr = wfs_listxattr,
   .removexattr = wfs_removexattr,
 };
 
@@ -626,6 +615,9 @@ void free_bitmap(uint32_t position, uint32_t* bitmap) {
     int b = position / 32;
     int p = position % 32;
     bitmap[b] = bitmap[b] ^ (0x1 << p);
+
+    //TODO: error checking?
+    //bitmap[b] &= ~(1U << p);  // clear instead of toggle
 }
 
 // we choose to zero blocks and inodes as they are freed because some
@@ -739,7 +731,7 @@ int main(int argc, char* argv[]) {
     }
 
     assert(retrieve_inode(0) != NULL);
-    fuse_stat = fuse_main(argc, argv, &wfs_oper, NULL);
+    fuse_stat = fuse_main(argc, argv, &wfs_ops, NULL);
 
     munmap(mregion, sb.st_size);
     close(fd);
