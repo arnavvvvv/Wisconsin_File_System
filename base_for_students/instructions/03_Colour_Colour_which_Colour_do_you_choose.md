@@ -56,7 +56,7 @@ Inside your `readdir` loop:
 - If YES: Build a "dirty" string using the `.ansi` code from `wfs_color_from_code` and the `dent->name`. Pass this new string to the filler function.
 - If NO: Pass the regular `dent->name` to the filler function, just like you did before.
 
-## 4.3. The "Gotcha" (And the Fix)
+### 4.3. The "Gotcha" (And the Fix)
 
 You've just created a problem. After your `readdir` hack, `ls` will see a file named `\033[31mfile.txt\033[0m` and will immediately call `wfs_getattr` on that exact dirty path. Your filesystem will fail, because that path doesn't really exist on disk.
 
