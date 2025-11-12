@@ -53,5 +53,19 @@ Modify `wfs_readdir`: How can you know who is calling `readdir`?
 Inside your `readdir` loop:
 
 - Check if the caller is `"ls"` and the file's inode has a color set.
-- If YES: Use `snprintf` to build a "dirty" string using the `.ansi` code from `wfs_color_from_code` and the `dent->name`. Pass this new string to the filler function.
+- If YES: Build a "dirty" string using the `.ansi` code from `wfs_color_from_code` and the `dent->name`. Pass this new string to the filler function.
 - If NO: Pass the regular `dent->name` to the filler function, just like you did before.
+
+## 4.3. The "Gotcha" (And the Fix)
+
+You've just created a problem. After your `readdir` hack, `ls` will see a file named `\033[31mfile.txt\033[0m` and will immediately call `wfs_getattr` on that exact dirty path. Your filesystem will fail, because that path doesn't really exist on disk.
+
+You need to "clean" all incoming paths before your filesystem tries to look them up.
+
+**The Cleaner:** Implement the `strip_ansi_codes` helper (we've provided the function prototype, you just need to fill it in).
+
+**The Location:** Where is the single best place to call this cleaner? You need a "receptionist" function that all path-based operations (`getattr`, `read`, `write`, `setxattr`, etc.) must go through.
+
+**The "Write" Problem:** What if a user tries to `touch "\033[31mfile.txt\033[0m"`? You must not store that dirty name on disk. Your filesystem's "truth" must always be clean. Where do you sanitize new filenames before saving them?
+
+Fix these two "path-cleaning" problems, and your magical `ls` hack will be complete. Good luck!
