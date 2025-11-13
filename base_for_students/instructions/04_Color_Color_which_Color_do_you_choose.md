@@ -62,4 +62,5 @@ Run ls /mnt. The file should be ANSI coded red.
 
 Run ls -N --show-control-chars to see the file coloured red.
 
-![filesystem layout on disk](instructions/sample_coloring_output.png)
+### Final Output:
+![filesystem layout on disk](sample_coloring_output.png)
