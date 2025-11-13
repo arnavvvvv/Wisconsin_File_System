@@ -96,7 +96,7 @@ Our filesystem will have a superblock, inode and data block bitmaps, and inodes 
 
 Given `mkfs.c` tool creates this exact structure. Your `wfs.c` must read and write to it. The layout of a disk is shown below.
 
-![filesystem layout on disk](instructions/disk-layout.svg)
+![filesystem layout on disk](base_for_students/instructions/disk-layout.svg)
 
 - Superblock: Located at offset 0. This is the "map of maps." It tells you the total number of inodes and data blocks, and (most importantly) the on-disk offsets to the other sections.
 - Inode Bitmap (IBITMAP): A packed bitmap (1 bit per inode). If bit i is 1, inode i is in use
