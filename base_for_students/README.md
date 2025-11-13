@@ -1,23 +1,38 @@
 # CS537 Project P6 – Mini WFS Filesystem
 
-Welcome to the mini WFS filesystem project. You will build a small, block-based userspace filesystem using FUSE over four incremental parts. Each part adds specific functionality. The final product supports inode/data allocation, file and directory operations, filesystem statistics, POSIX timestamps, and per-file color tagging via extended attributes (xattrs) with colored `ls` output.
+Welcome to the mini WFS (Wisconsin File System) project! We're going to build a small, block-based userspace filesystem similar to those you have seen in class such as FFS or ext2, from the ground up using FUSE. 
 
-## Repository Layout (Student View)
+The project has four incremental parts. Each part adds specific functionality. The final product supports file and directory operations, filesystem statistics, POSIX timestamps, and per-file color tagging via extended attributes (xattrs) with colored `ls` output.
+
+## Objectives
+
+- To understand how filesystem operations are implemented.
+- To implement a traditional block-based filesystem.
+- To learn to build a user-level filesystem using FUSE.
+- To learn how to add new capabilities to existing filesystem paradigms.
+
+## Repository Layout
 ```
 / (repo root)
-├── mkfs.c              # Provided: builds an empty disk image with superblock/bitmaps/inode 0 (root)
-├── disk.img            # Generated: initial empty filesystem image (size configurable)
-├── starter/
-│   ├── wfs_student.c   # YOUR WORK: skeleton FUSE implementation (fill TODOs)
-│   └── Makefile        # Build targets: mkfs + wfs
-└── tests/              # (Optional) instructor or self-written tests
+├── Makefile
+├── create_disk.sh      # Helper script to create a blank 1MB disk image 
+├── umount.sh           # Helper script to unmount the 'mnt' directory
+├── mkfs.c              # Initializes the disk image with the filesystem layout
+├── wfs.c               # The FUSE driver you will build
+├── wfs.h               # Header file with all on-disk structures
+├── instructions/       # Specs for Parts 1-4
+│   ├── 01_Fuse_Operations.md
+│   ├── 02_Show_me_the_Big_Picture.md
+│   ├── 03_Tick_Tok_Tick_Tok.md
+│   └── 04_Colour_Colour_which_Colour_do_you_choose.md
+└── tests/              # A set of tests to check your work
 ```
 
 ## Build & Run Quick Start
 
 To help you run your filesystem, we provided several scripts: 
 
-- `create_disk.sh` creates a file named `disk` with size 1MB whose content is zeroed. You can use this file as your disk image. We may test your filesystem with images of different sizes, so please do not assume the image is always 1MB.
+- `create_disk.sh` creates a file named `disk.img` with size 1MB whose content is zeroed. You can use this file as your disk image. We may test your filesystem with images of different sizes, so please do not assume the image is always 1MB.
 - `umount.sh` unmounts a mount point whose path is specified in the first argument. 
 - `Makefile` is a template makefile used to compile your code. It will also be used for grading. Please make sure your code can be compiled using the commands in this makefile. 
 
@@ -25,96 +40,91 @@ A typical way to compile and launch your filesystem is:
 
 ```sh
 $ make
-$ ./create_disk.sh                 # creates file `disk.img`
-$ ./mkfs -d disk.img -i 32 -b 200  # initialize `disk.img`
+$ ./create_disk.sh                 
+# # This creates a 1MB file named disk.img
+$ ./mkfs -d disk.img -i 32 -b 200  
+# # This initializes disk.img with 32 inodes and 200 data blocks
 $ mkdir mnt
-$ ./wfs disk.img -f -s mnt             # mount. -f runs FUSE in foreground
+$ ./wfs disk.img -f -s mnt         
+# This mounts your WFS implementation on the 'mnt' directory.
+# -f runs FUSE in the foreground (so you can see printf logs)
+# -s runs in single-threaded mode (which we require)
 ```
 
-You should be able to interact with your filesystem once you mount it: 
-
+You should be able to interact with your filesystem once you mount it (in a second terminal): 
 ```sh
-$ stat mnt
-$ mkdir mnt/a
-$ stat mnt/a
-$ mkdir mnt/a/b
 $ ls mnt
-$ echo asdf > mnt/x
-$ cat mnt/x
+# This will likely fail or do nothing... because you haven't
+# implemented 'readdir' yet!
 ```
+## Background: What is FUSE?
 
-## Disk Layout (On-disk)
-```
-+---------+----------+----------+---------+------------------+
-| SB      | I_BITMAP | D_BITMAP | INODES  | DATA BLOCKS      |
-+---------+----------+----------+---------+------------------+
-0         ^          ^          ^
-          |          |          |
-          i_bitmap_ptr  d_bitmap_ptr
-                      i_blocks_ptr
-                                  d_blocks_ptr
-```
-- Superblock (struct wfs_sb) at offset 0.
-- Bitmaps are packed (1 bit per inode/block).
-- Inodes are BLOCK_SIZE-aligned; each inode occupies an entire block for simplicity.
-- Data blocks hold file content and directory entries.
+FUSE (Filesystem in Userspace) is a powerful framework that lets you create your own filesystems in user space, without having to modify the Linux kernel.
 
-## Inode Structure (Incremental Features)
+To do this, you define callback functions for various filesystem operations (like `getattr`, `read`, `write`, `mkdir`, etc.). You register these functions in a single `struct fuse_operations`, which you then pass to FUSE's `main` function. 
+When a user runs `ls mnt`, the kernel sees this, triggers the FUSE driver, and your `wfs_readdir` function is called.
+
+A minimal example looks like this:
+
 ```c
-struct wfs_inode {
-  int    num;
-  mode_t mode;
-  uid_t  uid; gid_t gid;
-  off_t  size; int nlinks;
-  off_t  blocks[N_BLOCKS];      // 6 direct + 1 indirect pointer block
-  /* PART 3: YOU add time fields: time_t atim, mtim, ctim */
-  /* PART 4: YOU add: unsigned char color; (0 = none; more palette values below) */
+#include <fuse.h>
+#include <errno.h>
+
+// 1. Your callback implementation
+static int my_getattr(const char *path, struct stat *stbuf) {
+    // ... your logic to find the file and fill 'stbuf' ...
+    return 0; // or -ENOENT if not found
+}
+
+// 2. Your list of operations
+static struct fuse_operations ops = {
+    .getattr = my_getattr,
+    // ... other ops like .mknod, .read, etc.
 };
-// NOTE: The starter file intentionally omits time and color from the inode so you must
-// think about where and how to update them. This also forces a deliberate modification
-// to the on-disk layout — document this change in DESIGN.md.
+
+// 3. The main function
+int main(int argc, char *argv[]) {
+    // FUSE takes over, processes its own args,
+    // and calls functions from 'ops' when needed.
+    return fuse_main(argc, argv, &ops, NULL);
+}
 ```
-Implement in `wfs_student.c`:
-- Path resolution of absolute paths (`/a/b/c`).
-Deliverables:
-- All stubs in Part 1 converted from `-ENOSYS` to working implementations.
-- Create/write/read/remove files and directories.
-- Path traversal works through nested directories.
 
-Checklist:
-- File spanning multiple blocks returns consistent content.
+### Disk Layout
 
-**[Part 1 - Show me the Big Picture (statfs)](instructions/01_Show_me_the_Big_Picture.md)**
+Our filesystem will have a superblock, inode and data block bitmaps, and inodes and data blocks. There are two types of files in our filesystem -- directories and regular files. You may presume the block size is always 512 bytes. 
 
-**[Part 2 - Tick Tok Tick Tok (File Times)](instructions/02_Tick_Tock_Tick_Tock.md)**
+Given `mkfs.c` tool creates this exact structure. Your `wfs.c` must read and write to it. The layout of a disk is shown below.
 
-**[Part 3 - Colour Colour which Colour do you choose? (xattrs + Colored ls)](instructions/03_Colour_Colour_which_Colour_do_you_choose.md)**
+![filesystem layout on disk](instructions/disk-layout.svg)
 
-## Implementation Guidance
+- Superblock: Located at offset 0. This is the "map of maps." It tells you the total number of inodes and data blocks, and (most importantly) the on-disk offsets to the other sections.
+- Inode Bitmap (IBITMAP): A packed bitmap (1 bit per inode). If bit i is 1, inode i is in use
+- Data Bitmap (DBITMAP): A packed bitmap (1 bit per data block). If bit j is 1, data block j is in use.
+- Inodes are BLOCK_SIZE-aligned; each inode occupies an entire block for simplicity. Each inode contains pointers to a fixed number of direct data blocks and a single indirect block to support larger files.
+- Data Blocks (DATA BLOCKS): The rest of the disk. These blocks store the actual contents of files and the entries for directories.
 
-### Allocation Strategy
-- Store block offsets, not raw pointers, in inode->blocks so the image is position independent.
-- Indirect block: allocate an entire block to hold an array of `off_t` entries when needed.
+Let's Get Building!
 
-### Error Handling
-Return negative errno through FUSE methods. Use helper `wfs_error` only if you wrap deeper functions; otherwise return directly.
+Right now, your filesystem doesn't do anything. The wfs.c file is just a skeleton. Every FUSE operation you try (like ls, mkdir, touch) will fail because its function stub just returns -ENOSYS (Function Not Implemented).
 
-### Testing Suggestions
-Create small C test programs or shell scripts:
-- Stress path resolution (`/a/b/c` creation).
-- Validate file spanning direct + indirect blocks.
-- Confirm timestamps using `stat()` before/after operations.
-- Check `statvfs()` counts after batches of allocations.
-- Color tests: use `setxattr`/`getxattr` then run `ls` vs. `find`.
+Your job is to implement these functions, one part at a time.
 
-### Performance Notes
-This is educational: no caching beyond what the OS provides. Algorithms may be O(n) on directory size; that’s acceptable within constraints.
+**[Part 1 - FILE IT UP! (Fuse Operations)](instructions/01_File_it_Up.md)**
 
-## Common Pitfalls
-- Forgetting to subtract `D_BLOCK` (not `IND_BLOCK`) when indexing indirect blocks.
-- Colorizing names for non-`ls` processes.
-- Updating `mtime` on read or failing to update parent times on directory entry changes.
-- Not zeroing freed blocks/inodes (leads to stale dentries appearing after reuse). (Design a test that creates many files, deletes them, then lists to ensure freed entries don’t leak names.)
+**[Part 2 - Show me the Big Picture (statfs)](instructions/02_Show_me_the_Big_Picture.md)**
 
+**[Part 3 - Tick Tok Tick Tok (File Times)](instructions/03_Tick_Tok_Tick_Tok.md)**
+
+**[Part 4 - Color Color which Color do you choose? (xattrs + Colored ls)](instructions/04_Color_Color_which_Color_do_you_choose.md)**
 
 Good luck – build it step by step. FILE IT UP, then zoom out for the Big Picture, keep time with Tick Tok Tick Tok, and finish with a splash of Colour!
+
+
+## Useful Reading and References
+
+* https://www.cs.hmc.edu/~geoff/classes/hmc.cs135.201001/homework/fuse/fuse_doc.html
+* https://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/html/index.html
+* http://libfuse.github.io/doxygen/index.html
+* https://github.com/fuse4x/fuse/tree/master/example
+* `/usr/include/asm-generic/errno-base.h`
