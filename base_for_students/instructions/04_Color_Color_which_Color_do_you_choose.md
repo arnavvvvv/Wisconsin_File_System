@@ -61,3 +61,5 @@ Use getfattr -n user.color /mnt/somefile and see it return "red".
 Run ls /mnt. The file should be ANSI coded red.
 
 Run ls -N --show-control-chars to see the file coloured red.
+
+![filesystem layout on disk](instructions/sample_coloring_output.png)
