@@ -1,10 +1,13 @@
 # Part 2 – Show me the Big Picture (statfs)
+---
 
 ## Objective
+---
 
 Your goal is to report aggregate filesystem statistics. This is the function that answers the user's question, "How much space is free on this disk?" It's the powerhouse behind command-line tools like `df (disk free)`.
 
 ## Key Concepts
+---
 
 Your filesystem is the "manager" of the disk. Like any manager, it needs to be able to "take inventory." This involves answering two questions:
 
@@ -13,6 +16,7 @@ Your filesystem is the "manager" of the disk. Like any manager, it needs to be a
 2. What is my current usage? This information is dynamic and changes every time a file is created, written to, or deleted. To find the current usage, you must consult your live ledgers: the inode bitmap and the data bitmap. The number of free blocks is simply the number of 0s in the data bitmap.
 
 ## Implementation Guidance
+---
 
 Your task is to implement the `wfs_statfs` function in `wfs.c`. This function corresponds to the `.statfs = wfs_statfs` callback in the `wfs_ops` struct.
 

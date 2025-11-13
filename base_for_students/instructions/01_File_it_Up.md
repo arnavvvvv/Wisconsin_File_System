@@ -1,6 +1,7 @@
 # Part 1 - FILE IT UP! (Core FUSE Operations)
-
+---
 ## Objective
+---
 This is the foundation. Your goal is to complete the FUSE stubs in `wfs.c`. When you're done, you should be able to create files, write to them, read them back, create nested directories, and list their contents.
 
 Most of your FUSE stubs currently just return `-ENOSYS`; (Function Not Implemented). Your task is to replace those with working code.
@@ -25,6 +26,7 @@ static struct fuse_operations wfs_ops = {
 To do this, you'll first need to implement the core mechanics of your filesystem. We've provided helper function stubs (marked TODO) in wfs.c for these.
 
 ## Implementation Guidance:
+---
 
 ### Inode Structure (Incremental Features)
 ```c
@@ -77,6 +79,7 @@ return -ENOSPC
 - To run the filesystem in gdb, use gdb --args ./wfs disk.img -f -s mnt, and type run once inside gdb.
 
 ## Deliverables:
+---
 - Create/write/read/remove files and directories.
 - Path traversal works through nested directories.
 - You should be able to interact with your filesystem once you mount it: 
@@ -92,6 +95,7 @@ $ cat mnt/x
 ```
 
 ## Important Notes
+---
 
 1. Manually inspecting your filesystem (see Debugging section above), before running the tests, is highly encouraged. You should also experiment with your filesystem using simple utilities such as `mkdir`, `ls`, `touch`, `echo`, `rm`, etc. 
 2. Directories will not use the indirect block. That is, directories entries will be limited to the number that can fit in the direct data blocks.

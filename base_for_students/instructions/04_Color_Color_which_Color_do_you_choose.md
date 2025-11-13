@@ -1,6 +1,8 @@
 # Part 4 – Colour Colour which Colour do you choose? (xattrs + Colored ls)
+---
 
 ## Objective
+---
 Welcome to the final part. Your goal is to add a per-file "color" tag. This is a two-part challenge:
 
 - Store & Expose: You'll store this tag inside the inode and expose it to userspace using the standard "extended attribute" (xattr) interface.
@@ -8,6 +10,7 @@ Welcome to the final part. Your goal is to add a per-file "color" tag. This is a
 - The Magic Trick: You'll make the ls command magically display filenames in their designated color, while all other programs (like cat, find, or shell scripts) see the normal, clean filenames.
 
 ## Key Concepts
+---
 
 ### Extended Attributes (xattrs)
 
@@ -42,12 +45,14 @@ If command is anything else: You will send the normal, "clean" filename (e.g., "
 **The Cleaner:** Implement the `strip_ansi_codes` helper function provided in wfs.c that all path-based operations (getattr, read, write) must go through.
 
 ## Implementation Guidance
+---
 
 Add to `wfs_inode:` Add your new color field to `struct wfs_inode` in wfs.h. Don't forget to initialize it to `WFS_COLOR_NONE` in mkfs.c and `fill_inode()`.
 
 Implement xattr Callbacks: Implement the .setxattr, .getxattr, and .removexattr functions in wfs.c. Use the provided `parse_color_name` and `wfs_color_from_code` helpers. Use the `wfs_color_t` enum for different colors and don't modify this enum.
 
 ## Sanity Check
+---
 
 Use setfattr -n user.color -v red /mnt/somefile.
 

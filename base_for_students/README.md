@@ -29,6 +29,7 @@ The project has four incremental parts. Each part adds specific functionality. T
 ```
 
 ## Build & Run Quick Start
+---
 
 To help you run your filesystem, we provided several scripts: 
 
@@ -58,6 +59,7 @@ $ ls mnt
 # implemented 'readdir' yet!
 ```
 ## Background: What is FUSE?
+---
 
 FUSE (Filesystem in Userspace) is a powerful framework that lets you create your own filesystems in user space, without having to modify the Linux kernel.
 
@@ -122,6 +124,7 @@ Good luck – build it step by step. FILE IT UP, then zoom out for the Big Pictu
 
 
 ## Useful Reading and References
+---
 
 * https://www.cs.hmc.edu/~geoff/classes/hmc.cs135.201001/homework/fuse/fuse_doc.html
 * https://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/html/index.html
