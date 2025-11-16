@@ -32,8 +32,8 @@
  */
 
 /* --------------------------- Globals / Mount ------------------------------ */
-static void *mregion; // mapped disk image
-static int wfs_error; // last error to return through FUSE
+void *mregion; // mapped disk image
+int wfs_error; // last error to return through FUSE
 
 struct color_entry { const char *name; uint8_t code; };
 static const struct color_entry color_table[] = {
@@ -51,7 +51,7 @@ static const struct color_entry color_table[] = {
     {"gray",    WFS_COLOR_GRAY},
 };
 
-static int parse_color_name(const char *s, uint8_t *out_code) {
+int parse_color_name(const char *s, uint8_t *out_code) {
     if (!s || !out_code) return 0;
     char buf[32]; size_t n = 0;
     while (s[n] && n + 1 < sizeof(buf)) { buf[n] = (char)tolower((unsigned char)s[n]); n++; }
@@ -89,27 +89,22 @@ static inline const wfs_color_info* wfs_color_from_code(uint8_t code) {
 }
 
 // Helper: strip ANSI color sequences from names (useful when colorizing ls output)
-static void strip_ansi_codes(const char *in, char *out, size_t out_len)
+void strip_ansi_codes(const char *in, char *out, size_t out_len)
 {
     /*TODO*/
 }
 
-static struct wfs_sb *sb();
-struct wfs_inode *retrieve_inode(int inum);
-struct wfs_inode *allocate_inode(void);
-static off_t allocate_data_block(void);
-void free_inode(struct wfs_inode *inode);
-void free_block(off_t blk_offset);
-char *data_offset(struct wfs_inode *inode, off_t offset, int alloc);
-int add_dentry(struct wfs_inode* parent, int num, char* name);
-static int remove_dentry(struct wfs_inode *dir, int inum);
-static int path_lookup(const char *path, struct wfs_inode **out);
-static void fill_inode(struct wfs_inode *inode, mode_t mode);
+int get_inode_from_path(char *path, struct wfs_inode **inode)
+{
+    /* TODO: Resolve absolute paths by splitting on '/' and walking from the root inode.
+     * For each component, scan the current directory's dentries (via data_offset) to find the child inode;
+     * on missing component return -ENOENT, otherwise set *inode to the final inode and return 0. */
+    (void)path; (void)inode;
+    return 0;
 
+}
 void free_bitmap(uint32_t position, uint32_t* bitmap) {
-    int b = position / 32;
-    int p = position % 32;
-    bitmap[b] = bitmap[b] ^ (0x1 << p);
+    /*TODO: Clear the bit at 'position' in the bitmap */
 }
 
 struct wfs_inode *retrieve_inode(int inum) {
@@ -120,18 +115,34 @@ struct wfs_inode *retrieve_inode(int inum) {
     return NULL;
 }
 
+ssize_t allocate_block(uint32_t* bitmap, size_t len) {
+    for (uint32_t i = 0; i < len; i++) {
+        uint32_t bm_region = bitmap[i];
+        if (bm_region == 0xFFFFFFFF) {
+            continue;
+        }
+        for (uint32_t k = 0; k < 32; k++) {
+            if (!((bm_region >> k) & 0x1)) { // it is free
+                // allocate
+                bitmap[i] = bitmap[i] | (0x1 << k);
+                return 32*i + k;
+                //return block_region + (BLOCK_SIZE * (32*i + k));
+            }
+        }
+    }
+    return -1; // no free blocks found
+}
+
 struct wfs_inode *allocate_inode(void) {
-    /* TODO:
-     * Find a free inode in the inode bitmap and return it.
-     * Hint: use bitmap_alloc(), then compute the inode pointer via retrieve_inode(). */
-    wfs_error = -ENOSYS;
+    /* TODO: Allocate an inode slot by marking the inode bitmap and return a
+     * pointer to the inode block within the mapped image (or NULL on failure). */
+    wfs_error = -ENOSPC;
     return NULL;
 }
 
-static off_t allocate_data_block(void) {
-    /* TODO: 
-     * Allocate a data block and return its on-disk OFFSET.
-     * Return 0 on failure (no space). */
+off_t allocate_data_block(void) {
+    /* TODO: Use the data bitmap to allocate a free data block and return its
+     * on-disk byte OFFSET. Handle error appropriately. */
     return 0;
 }
 
@@ -155,14 +166,8 @@ char *data_offset(struct wfs_inode *inode, off_t offset, int alloc) {
     - Optionally provision storage for missing pieces when requested.
     - Return a pointer into the mapped image at the resolved location within a block.
     */
-    wfs_error = -ENOSYS;
+    wfs_error = -ENOSPC;
     return NULL;
-}
-
-/* Simplistic path resolution: absolute paths only; no color-filter virtual dirs yet. */
-static int get_inode_from_path(const char *path, struct wfs_inode **inode)
-{
-    /*TODO*/
 }
 
 void fillin_inode(struct wfs_inode* inode, mode_t mode)
@@ -177,90 +182,99 @@ void fillin_inode(struct wfs_inode* inode, mode_t mode)
     /* TODO PART 4: Initialize color = none. */
 }
 
-/* Directory entry management (simplified; no deallocation of directory blocks) */
 int add_dentry(struct wfs_inode* parent, int num, char* name)
 {
-   /*TODO*/
+   /*TODO: insert dentry if there is an empty slot.
+    We will not do indirect blocks with directories*/
+    return 0;
 }
 
 int remove_dentry(struct wfs_inode *dir, int inum)
 {
-    /*TODO*/
+    /*TODO: Use inode 0 as a "deleted" inode. 
+    So any directory entry could be marked as 0 to indicate it is deleted. 
+    Removed dentries can result in "holes" in the dentry list, thus it is
+    important to use the first available slot in add_dentry() */
+    return 0;
 }
 
 /* --------------------------- FUSE Operations ------------------------------ */
-static int wfs_getattr(const char *path, struct stat *st)
+int wfs_getattr(const char *path, struct stat *st)
 {
     /* TODO */
     return -ENOSYS;
 }
-static int wfs_mknod(const char *path, mode_t mode, dev_t dev)
+int wfs_mknod(const char *path, mode_t mode, dev_t dev)
 {
     (void)dev; /* TODO */
     return -ENOSYS;
 }
-static int wfs_mkdir(const char *path, mode_t mode)
+int wfs_mkdir(const char *path, mode_t mode)
 { 
-    /* TODO */ return -ENOSYS;
+    /* TODO */
+    return -ENOSYS;
 }
-static int wfs_read(const char *path, char *buf, size_t len, off_t off, struct fuse_file_info *fi)
+int wfs_read(const char *path, char *buf, size_t len, off_t off, struct fuse_file_info *fi)
 {
     (void)fi; /* TODO */
     return -ENOSYS;
 }
-static int wfs_write(const char *path, const char *buf, size_t len, off_t off, struct fuse_file_info *fi)
+int wfs_write(const char *path, const char *buf, size_t len, off_t off, struct fuse_file_info *fi)
 {
     (void)fi; /* TODO */
     return -ENOSYS;
 }
-static int wfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t off, struct fuse_file_info *fi)
+int wfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t off, struct fuse_file_info *fi)
 {
     (void)off;
     (void)fi; /* TODO */
     return -ENOSYS;
 }
-static int wfs_unlink(const char *path)
+int wfs_unlink(const char *path)
 { 
-    /* TODO */return -ENOSYS;
+    /* TODO */
+    return -ENOSYS;
 }
-static int wfs_rmdir(const char *path)
+int wfs_rmdir(const char *path)
 { 
-    /* TODO */return -ENOSYS;
+    /* TODO */
+    return -ENOSYS;
 }
 
 /* TODO PART 2: statfs implementation */
-static int wfs_statfs(const char *path, struct statvfs *st)
+int wfs_statfs(const char *path, struct statvfs *st)
 {
     (void)path; /* TODO */
     return -ENOSYS;
 }
 
-/* TODO PART 3: ensure time updates in read/write/readdir/add/remove operations */
-/* Atime: successful read of file data or directory list; Mtime/Ctime: upon content/metadata change */
+/* TODO PART 3: ensure time updates in read/write/readdir/add/remove operations
+Atime: successful read of file data or directory list;
+Mtime/Ctime: upon content/metadata change */
 
 /* TODO PART 4: xattr user.color + colored names when process name == "ls" */
-static int wfs_setxattr(const char *path, const char *name, const char *value, size_t size, int flags)
+int wfs_setxattr(const char *path, const char *name, const char *value, size_t size, int flags)
 {
     (void)path;
     (void)name;
     (void)value;
     (void)size;
     (void)flags;
-    return -EOPNOTSUPP;
+    return -ENOSYS;
 }
-static int wfs_getxattr(const char *path, const char *name, char *value, size_t size)
+int wfs_getxattr(const char *path, const char *name, char *value, size_t size)
 {
     (void)path;
     (void)name;
     (void)value;
     (void)size;
-    return -EOPNOTSUPP;
+    return -ENOSYS;
 }
-static int wfs_removexattr(const char *path, const char *name)
+int wfs_removexattr(const char *path, const char *name)
 {
     (void)path;
     (void)name;
-    return -EOPNOTSUPP;
+    return -ENOSYS;
 }
 
 static struct fuse_operations wfs_ops = {
