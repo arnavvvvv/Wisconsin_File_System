@@ -1,0 +1,26 @@
+SUCCESS: opened mnt/file0 for reading
+SUCCESS: read 7 bytes from mnt/file0
+SUCCESS: closed file
+SUCCESS: opened mnt/file1 for reading
+SUCCESS: read 7 bytes from mnt/file1
+SUCCESS: closed file
+SUCCESS: opened mnt/dir0/file00 for reading
+SUCCESS: read 7 bytes from mnt/dir0/file00
+SUCCESS: closed file
+SUCCESS: opened mnt/dir0/file01 for reading
+SUCCESS: read 7 bytes from mnt/dir0/file01
+SUCCESS: closed file
+SUCCESS: opened mnt/dir1/file10 for reading
+SUCCESS: read 7 bytes from mnt/dir1/file10
+SUCCESS: closed file
+SUCCESS: opened mnt/dir1/file11 for reading
+SUCCESS: read 7 bytes from mnt/dir1/file11
+SUCCESS: closed file
+SUCCESS: xattr user.color for mnt/file0 = 'green'
+SUCCESS: xattr user.color for mnt/file1 = 'red'
+SUCCESS: xattr user.color for mnt/dir0 = 'yellow'
+SUCCESS: xattr user.color for mnt/dir0/file00 = 'magenta'
+SUCCESS: xattr user.color for mnt/dir0/file01 = 'cyan'
+SUCCESS: xattr user.color for mnt/dir1 = 'blue'
+SUCCESS: xattr user.color for mnt/dir1/file10 = 'green'
+SUCCESS: xattr user.color for mnt/dir1/file11 = 'red'

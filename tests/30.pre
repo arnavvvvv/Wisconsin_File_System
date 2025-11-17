@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Pre for test 2: use provided prebuilt image, mount to `./mnt`, export `WFS_DISK`.
+# This prefile is robust and safe to be sourced by the harness: it will print
+# clear diagnostics but will not abort the harness (it returns 0 when sourced).
+
+set -u
+
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT_DIR"
+
+echo "[2.pre] Preparing prebuilt image mount..."
+
+# Ensure the prebuilt image exists. Warn (but don't fail the harness) if missing.
+if [ ! -f tests/prebuilt_disk ]; then
+	echo "[2.pre] ERROR: tests/prebuilt_disk not found. Please run regenerate script." >&2
+	# Keep behavior tolerant for harness but make problem visible to instructor.
+else
+	echo "[2.pre] Copying prebuilt image to working disk.img"
+	cp -f tests/prebuilt_disk disk.img || echo "[2.pre] WARNING: cp failed" >&2
+fi
+
+# Export absolute disk path for tests (so test code using WFS_DISK can map it)
+export WFS_DISK="$(pwd)/disk.img"
+
+# Stop any stale wfs processes that reference ./mnt (best-effort)
+if pgrep -f "./wfs .* ./mnt" >/dev/null 2>&1; then
+	echo "[2.pre] Stopping stale wfs processes that may hold ./mnt"
+	pkill -f "./wfs .* ./mnt" || true
+	sleep 0.05
+fi
+
+# Ensure mountpoint is clean: attempt unmount, then remove and recreate it.
+fusermount -u ./mnt 2>/dev/null || umount -l ./mnt 2>/dev/null || true
+rm -rf ./mnt 2>/dev/null || true
+mkdir -p ./mnt
+
+# Start wfs daemonized (-s). If daemonize fails, try foreground & background.
+echo "[2.pre] Starting wfs (daemonized preferred)"
+if ./wfs disk.img -s ./mnt >/dev/null 2>&1; then
+	echo "[2.pre] wfs started (daemonized)"
+elif ( ./wfs disk.img -f -s ./mnt & ); then
+	echo "[2.pre] wfs started (foreground backgrounded)"
+	sleep 0.1
+else
+	echo "[2.pre] WARNING: failed to start wfs; continuing (test may fail)" >&2
+fi
+
+# Wait up to ~5 seconds for mount to appear; warn but don't fail pre
+TRIES=0
+until mountpoint -q ./mnt 2>/dev/null || [ $TRIES -gt 25 ]; do
+	sleep 0.2
+	TRIES=$((TRIES+1))
+done
+
+if mountpoint -q ./mnt 2>/dev/null; then
+	echo "[2.pre] wfs mounted at ./mnt"
+else
+	echo "[2.pre] warning: wfs did not mount within timeout, continuing" >&2
+fi
+
+# If this script was sourced, use `return 0`; if it was executed, use
+# `exit 0`. This makes the prefile safe whether the harness runs it in a
+# subshell or sources it to propagate exports (like `WFS_DISK`).
+if [ "${BASH_SOURCE[0]:-}" != "${0:-}" ]; then
+	return 0 2>/dev/null || exit 0
+else
+	exit 0
+fi
