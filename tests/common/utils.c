@@ -16,6 +16,11 @@ char* map_disk() {
   }
 
   char* map = mmap(NULL, statbuf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+  if (map == MAP_FAILED) {
+    perror("mmap");
+    close(fd);
+    return NULL;
+  }
   close(fd);
   return map;
 }
@@ -70,6 +75,7 @@ int open_file_read(const char* path) {
     perror("open");
     return FAIL;
   }
+  printf("SUCCESS: opened %s for reading\n", path);
   return fd;
 }
 
@@ -80,6 +86,7 @@ int open_file_write(const char* path) {
     perror("open");
     return FAIL;
   }
+  printf("SUCCESS: opened %s for writing\n", path);
   return fd;
 }
 
@@ -104,7 +111,7 @@ int read_file_check(int fd, const char* expected_content, size_t content_size,
       return FAIL;
     }
   }
-
+  printf("SUCCESS: read %zu bytes from %s\n", content_size, path);
   return PASS;
 }
 
@@ -121,6 +128,7 @@ int write_file_check(int fd, const char* content, size_t content_size,
     perror("write");
     return FAIL;
   }
+  printf("SUCCESS: wrote %zu bytes to %s\n", content_size, path);
   return PASS;
 }
 
@@ -129,6 +137,7 @@ int close_file(int fd) {
     perror("close");
     return FAIL;
   }
+  printf("SUCCESS: closed file\n");
   return PASS;
 }
 
@@ -139,6 +148,7 @@ int create_file(const char* path) {
     perror("open");
     return FAIL;
   }
+  printf("SUCCESS: created file %s\n", path);
   return fd;
 }
 
@@ -148,6 +158,7 @@ int create_dir(const char* path) {
     perror("mkdir");
     return FAIL;
   }
+  printf("SUCCESS: created directory %s\n", path);
   return PASS;
 }
 
@@ -157,6 +168,7 @@ int remove_file(const char* path) {
     perror("unlink");
     return FAIL;
   }
+  printf("SUCCESS: removed file %s\n", path);
   return PASS;
 }
 
@@ -166,6 +178,7 @@ int remove_dir(const char* path) {
     perror("rmdir");
     return FAIL;
   }
+  printf("SUCCESS: removed directory %s\n", path);
   return PASS;
 }
 

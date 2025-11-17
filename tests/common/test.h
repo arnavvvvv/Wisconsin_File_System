@@ -115,6 +115,8 @@ int expected_datablock_num(int file_block_num, int cur_file_num);
            expected_inode_count, inode_count(disk_map));           \
     UNMAP_DISK();                                                  \
     return FAIL;                                                   \
+  } else {                                                         \
+    printf("SUCCESS: Correct inode count: %ld\n",inode_count(disk_map)); \           
   }                                                                \
                                                                    \
   if (data_block_count(disk_map) != expected_data_block_count) {   \
@@ -122,6 +124,8 @@ int expected_datablock_num(int file_block_num, int cur_file_num);
            expected_data_block_count, data_block_count(disk_map)); \
     UNMAP_DISK();                                                  \
     return FAIL;                                                   \
+  } else {                                                         \
+    printf("SUCCESS: Correct data block count: %ld\n",data_block_count(disk_map)); \
   }
 
 #define CHECK_MAPPED(cond) \
