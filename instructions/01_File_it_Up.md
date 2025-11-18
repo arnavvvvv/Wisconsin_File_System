@@ -67,11 +67,11 @@ Think Recursion? Maybe?
 ### Error Handling
 - Return negative errno through FUSE methods. 
 - If any of the following issues occur during the execution of a registered function, it's essential to return the respective error code. These error code macros are accessible by including header `<errno.h>`.
-- File/directory does not exist while trying to read/write a file/directory\
+  - File/directory does not exist while trying to read/write a file/directory\
     return -ENOENT`
-- A file or directory with the same name already exists while trying to create a file/directory.\
+  - A file or directory with the same name already exists while trying to create a file/directory.\
 return -EEXIST
-- There is insufficient disk space while trying to create or write to a file.\
+  - There is insufficient disk space while trying to create or write to a file.\
 return -ENOSPC
 
 ### Debugging
@@ -82,7 +82,7 @@ return -ENOSPC
 ---
 - Create/write/read/remove files and directories.
 - Path traversal works through nested directories.
-- You should be able to interact with your filesystem once you mount it: 
+- You should be able to interact with your filesystem once you mount it (example below): 
 
 ```sh
 $ stat mnt
@@ -105,4 +105,3 @@ $ cat mnt/x
 6. Please make sure your code can be compiled using the commands in the provided Makefile.
 7. We recommend using `mmap` to map the entire disk image into memory when the filesystem is mounted. Mapping the image into memory simplifies reading and writing the on-disk structures a great deal, compared to `read` and `write` system calls.
 8. Think carefully about the interfaces you will need to build to manipulate on-disk data structures. For example, you might have an `allocate_inode()` function which allocates an inode using the bitmap and returns a pointer to a new inode, or returns an error if there are no more inodes available in the system.
-9. You must use the superblock and inode structs as they are defined in the header file, but the actual allocation and free strategies are up to you. Our tests will evaluate whether or not you have the correct number of blocks allocated, but we do not assume they are in a particular location on-disk.

@@ -1,4 +1,4 @@
-# CS537 Project P6 – Mini WFS Filesystem
+# CS537 Project P6 – Mini WFS
 ---
 Welcome to the mini WFS (Wisconsin File System) project! We're going to build a small, block-based userspace filesystem similar to those you have seen in class such as FFS or ext2, from the ground up using FUSE. 
 
@@ -14,26 +14,28 @@ The project has four incremental parts. Each part adds specific functionality. T
 ## Repository Layout
 ```
 / (repo root)
-├── Makefile
-├── create_disk.sh      # Helper script to create a blank 1MB disk image 
-├── umount.sh           # Helper script to unmount the 'mnt' directory
-├── mkfs.c              # Initializes the disk image with the filesystem layout
-├── wfs.c               # The FUSE driver you will build
-├── wfs.h               # Header file with all on-disk structures
-├── instructions/       # Specs for Parts 1-4
-│   ├── 01_Fuse_Operations.md
+├── instructions/           # Specs for Parts 1-4
+│   ├── 01_File_it_Up.md
 │   ├── 02_Show_me_the_Big_Picture.md
 │   ├── 03_Tick_Tok_Tick_Tok.md
-│   └── 04_Colour_Colour_which_Colour_do_you_choose.md
-└── tests/              # A set of tests to check your work
+│   └── 04_Color_Color_which_Color_do_you_choose.md
+├── solution/ 
+│   ├── Makefile
+│   ├── create_disk.sh      # Helper script to create a blank 1MB disk image 
+│   ├── umount.sh           # Helper script to unmount the 'mnt' directory
+│   ├── mkfs.c              # Initializes the disk image with the filesystem layout
+│   ├── wfs.c               # The FUSE driver you will build
+│   ├── wfs.h               # Header file with all on-disk structures
+└── tests/                  # A set of tests to check your work
 ```
 
 ## Build & Run Quick Start
 ---
+Ensure you build a new docker image with additional packages from [CS537 Docker setup guide](https://git.doit.wisc.edu/cdis/cs/courses/cs537/useful-resources/cs537-docker) and run that image for this project.
 
 To help you run your filesystem, we provided several scripts: 
 
-- `create_disk.sh` creates a file named `disk.img` with size 1MB whose content is zeroed. You can use this file as your disk image. We may test your filesystem with images of different sizes, so please do not assume the image is always 1MB.
+- `create_disk.sh` creates a file named `disk.img` with size 1MB whose content is zeroed. You can use this file as your disk image.
 - `umount.sh` unmounts a mount point whose path is specified in the first argument. 
 - `Makefile` is a template makefile used to compile your code. It will also be used for grading. Please make sure your code can be compiled using the commands in this makefile. 
 
@@ -119,9 +121,9 @@ Given `mkfs.c` tool creates this exact structure. Your `wfs.c` must read and wri
 
 Let's Get Building!
 
-Right now, your filesystem doesn't do anything. The wfs.c file is just a skeleton. Every FUSE operation you try (like ls, mkdir, touch) will fail because its function stub just returns -ENOSYS (Function Not Implemented).
+Right now, your filesystem doesn't do anything. The wfs.c file is just a skeleton. Your first goal would be to successfully mount the filesystem by imlementing certain function stubs. Thereafter, every FUSE operation you try (like ls, mkdir, touch) will fail because its function stub just returns -ENOSYS (Function Not Implemented) and you will proceed to implement them.
 
-Your job is to implement these functions, one part at a time.
+Your job is to implement all of these functions, one part at a time.
 
 **[Part 1 - FILE IT UP! (Fuse Operations)](instructions/01_File_it_Up.md)**
 
