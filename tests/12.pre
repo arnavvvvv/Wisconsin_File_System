@@ -1,2 +1,2 @@
 # one-time per-test setup (build tools and the test binary only)
-make >/dev/null 2>&1 && make -C tests 12 >/dev/null 2>&1
+make -C solution >/dev/null 2>&1 && make -C tests 12 >/dev/null 2>&1

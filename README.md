@@ -63,6 +63,12 @@ Once you are done, make sure to unmount the disk file through:
 ```sh
 $ ./unmount.sh mnt
 ```
+
+To test your implementation, run the run-tests.sh from the root p6 folder.
+```sh
+root@fbaca27f57d2:/cs537-projects/p6-base# ./tests/run-tests.sh 
+```
+
 ## Background: What is FUSE?
 ---
 
