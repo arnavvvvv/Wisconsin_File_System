@@ -4,36 +4,53 @@
 #include <fcntl.h>
 #include "common/test.h"
 
-const int expected_inode_count = 65;
-const int expected_data_block_count = 4;
+const int block_num = 64;
 
 int main() {
+  int filesize =
+      (block_num - 2) *
+      BLOCK_SIZE;  // 2 blocks are used for root dir and indirect block
+  char* buf = (char*)malloc(filesize);
+  generate_random_data(buf, filesize);
+
   int ret;
-  int num_item = 64;
+  CHECK(create_file("mnt/large.txt"));
+  int fd = ret;
 
-  char** filenames = (char**)calloc(num_item, sizeof(char*));
-  for (size_t i = 0; i < num_item; i++)
-  {
-    filenames[i] = (char*)calloc(32, sizeof(char));
-    sprintf(filenames[i], "file%ld", i);
-  }
-  
+  CHECK(write_file_check(fd, buf, filesize, "mnt/large.txt", 0));
 
-  for (size_t i = 0; i < num_item; i++)
-  {
-    char* filename = (char*)calloc(num_item, sizeof(char));
-    sprintf(filename, "mnt/%s", filenames[i]);
-    CHECK(create_file(filename));
-  }
+  CHECK(close_file(fd));
 
-  CHECK(read_dir_check("mnt", filenames, num_item));
-  
+  CHECK(open_file_read("mnt/large.txt"));
+  fd = ret;
+
+  CHECK(read_file_check(fd, buf, filesize, "mnt/large.txt", 0));
+
+  free(buf);
+  CHECK(close_file(fd));
 
   MAP_DISK();
-
-  CHECK_INODE_AND_BLOCK_COUNT(expected_inode_count, expected_data_block_count);
-
+  CHECK_INODE_AND_BLOCK_COUNT(2, 64);
   UNMAP_DISK();
+
+  CHECK(open_file_write("mnt/large.txt"));
+  fd = ret;
+
+  lseek(fd, 0, SEEK_END);
+  int rc = write(fd, "a", 1);
+  if (rc >= 0) {
+    printf(
+        "Expected to fail to create file because of running out of data blocks: "
+        "%s\n",
+        "mnt/large.txt");
+    return FAIL;
+  } else if (errno != ENOSPC) {
+    printf("Expected errno to be ENOSPC, but got %d\n", errno);
+    return FAIL;
+  } else if (errno == ENOSPC) {
+    printf(
+        "Expected errno (ENOSPC) received - failed to write because of running out of data blocks\n");
+  }
 
   return PASS;
 }

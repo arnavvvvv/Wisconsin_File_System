@@ -1,0 +1,30 @@
+SUCCESS: created file mnt/large1.txt
+SUCCESS: created file mnt/large2.txt
+SUCCESS: wrote 4608 bytes to mnt/large1.txt
+SUCCESS: wrote 4608 bytes to mnt/large2.txt
+SUCCESS: wrote 4608 bytes to mnt/large1.txt
+SUCCESS: wrote 4608 bytes to mnt/large2.txt
+SUCCESS: wrote 4608 bytes to mnt/large1.txt
+SUCCESS: wrote 4608 bytes to mnt/large2.txt
+SUCCESS: wrote 4608 bytes to mnt/large1.txt
+SUCCESS: wrote 4608 bytes to mnt/large2.txt
+SUCCESS: wrote 4608 bytes to mnt/large1.txt
+SUCCESS: wrote 4608 bytes to mnt/large2.txt
+SUCCESS: wrote 4608 bytes to mnt/large1.txt
+SUCCESS: wrote 4608 bytes to mnt/large2.txt
+SUCCESS: wrote 4608 bytes to mnt/large1.txt
+SUCCESS: wrote 4608 bytes to mnt/large2.txt
+SUCCESS: wrote 4608 bytes to mnt/large1.txt
+SUCCESS: wrote 4608 bytes to mnt/large2.txt
+SUCCESS: wrote 4608 bytes to mnt/large1.txt
+SUCCESS: wrote 4608 bytes to mnt/large2.txt
+SUCCESS: closed file
+SUCCESS: closed file
+SUCCESS: opened mnt/large1.txt for reading
+SUCCESS: read 4608 bytes from mnt/large1.txt
+SUCCESS: closed file
+SUCCESS: opened mnt/large2.txt for reading
+SUCCESS: read 4608 bytes from mnt/large2.txt
+SUCCESS: closed file
+SUCCESS: Correct inode count: 3
+SUCCESS: Correct data block count: 37

@@ -1,0 +1,10 @@
+SUCCESS: created file mnt/large.txt
+SUCCESS: wrote 31744 bytes to mnt/large.txt
+SUCCESS: closed file
+SUCCESS: opened mnt/large.txt for reading
+SUCCESS: read 31744 bytes from mnt/large.txt
+SUCCESS: closed file
+SUCCESS: Correct inode count: 2
+SUCCESS: Correct data block count: 64
+SUCCESS: opened mnt/large.txt for writing
+Expected errno (ENOSPC) received - failed to write because of running out of data blocks

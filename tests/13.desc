@@ -1,1 +1,1 @@
-Read/write test. Overwrite data blocks with offset not on block boundary. Ensure no additional data block allocation and read is correct.
+Large directory test. Add 64 files to directory, verify with readdir.

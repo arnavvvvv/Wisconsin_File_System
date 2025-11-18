@@ -1,0 +1,7 @@
+SUCCESS: created file mnt/t24_a
+SUCCESS: closed file
+SUCCESS: created file mnt/t24_b
+SUCCESS: closed file
+SUCCESS: setxattr blue for file t24_b
+SUCCESS: plain entry found for t24_a
+SUCCESS: colored entry found for t24_b

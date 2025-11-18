@@ -1,0 +1,8 @@
+SUCCESS: created file mnt/t20_file
+SUCCESS: wrote 3 bytes to mnt/t20_file
+SUCCESS: closed file
+SUCCESS: opened mnt/t20_file for reading
+SUCCESS: closed file
+SUCCESS: atime updated correctly on read
+SUCCESS: mtime unchanged on read
+SUCCESS: ctime unchanged on read

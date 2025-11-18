@@ -1,0 +1,4 @@
+SUCCESS: created file mnt/./data8.txt
+SUCCESS: closed file
+SUCCESS: Correct inode count: 2
+SUCCESS: Correct data block count: 1

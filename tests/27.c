@@ -1,30 +1,44 @@
 #include <stdio.h>
-#include <string.h>
-#include <sys/xattr.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <dirent.h>
 #include "common/test.h"
 
-/* Test 27: Changing color updates ctime and name remains stable (non-ls view) */
+
 int main() {
   int ret;
-  CHECK(create_file("mnt/t27_target")); int fd = ret; CHECK(close_file(fd));
+  // Create a parent directory
+  CHECK(create_dir("mnt/t27_dir"));
 
-  struct stat s0, s1, s2;
-  if (stat("mnt/t27_target", &s0) != 0) { perror("stat s0"); return FAIL; }
-  sleep(1);
-  // Set blue
-  if (setxattr("mnt/t27_target", "user.color", "blue", 4, 0) != 0) { perror("setxattr blue"); return FAIL; }
-  if (stat("mnt/t27_target", &s1) != 0) { perror("stat s1"); return FAIL; }
-  if (!(s1.st_ctime >= s0.st_ctime)) { printf("ctime did not advance after first color set\n"); return FAIL; }
-  sleep(1);
-  // Change to red
-  if (setxattr("mnt/t27_target", "user.color", "red", 3, 0) != 0) { perror("setxattr red"); return FAIL; }
-  if (stat("mnt/t27_target", &s2) != 0) { perror("stat s2"); return FAIL; }
-  if (!(s2.st_ctime >= s1.st_ctime)) { printf("ctime did not advance after second color set\n"); return FAIL; }
+  struct stat p0, p1, p2, p3;
+  if (stat("mnt/t27_dir", &p0) != 0) { perror("stat p0"); return FAIL; }
 
-  // Non-ls readdir should list plain name
-  char* expected[] = {"t27_target"};
-  if (read_dir_check("mnt", expected, 1) != PASS) { return FAIL; }
+  // readdir should bump atime only
+  sleep(1);
+  DIR* d = opendir("mnt/t27_dir"); if (!d) { perror("opendir"); return FAIL; }
+  struct dirent* e; while ((e = readdir(d)) != NULL) { /* drain */ }
+  closedir(d);
+  if (stat("mnt/t27_dir", &p1) != 0) { perror("stat p1"); return FAIL; }
+  if (!(p1.st_atime >= p0.st_atime)) { printf("dir atime did not increase on readdir\n"); return FAIL; }
+  else printf("SUCCESS: dir atime updated correctly on readdir\n");
+  if (p1.st_mtime != p0.st_mtime) { printf("dir mtime changed on readdir\n"); return FAIL; }
+  else printf("SUCCESS: dir mtime unchanged on readdir\n");
+  if (p1.st_ctime != p0.st_ctime) { printf("dir ctime changed on readdir\n"); return FAIL; }
+  else printf("SUCCESS: dir ctime unchanged on readdir\n");
+
+  // Adding an entry should bump mtime/ctime
+  sleep(1);
+  CHECK(create_file("mnt/t27_dir/child")); int fd = ret; CHECK(close_file(fd));
+  if (stat("mnt/t27_dir", &p2) != 0) { perror("stat p2"); return FAIL; }
+  if (!(p2.st_mtime >= p1.st_mtime && p2.st_ctime >= p1.st_ctime)) { printf("dir times did not increase on add dentry\n"); return FAIL; }
+  else printf("SUCCESS: dir mtime/ctime updated correctly on add dentry\n");
+
+  // Removing entry should bump mtime/ctime again
+  sleep(1);
+  CHECK(remove_file("mnt/t27_dir/child"));
+  if (stat("mnt/t27_dir", &p3) != 0) { perror("stat p3"); return FAIL; }
+  if (!(p3.st_mtime >= p2.st_mtime && p3.st_ctime >= p2.st_ctime)) { printf("dir times did not increase on remove dentry\n"); return FAIL; }
+  else printf("SUCCESS: dir mtime/ctime updated correctly on remove dentry\n");
 
   return PASS;
 }

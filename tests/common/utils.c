@@ -223,6 +223,7 @@ int read_dir_check(const char* path, char* const* expected_dentries,
       ret = FAIL;
     }
   }
+  printf("SUCCESS: read directory %s\n", path);
 
   closedir(dir);
   free(found_num);

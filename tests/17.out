@@ -1,0 +1,267 @@
+SUCCESS: created file mnt/dummy
+SUCCESS: created directory mnt/subdir
+Creating 64 files
+SUCCESS: created file mnt/subdir/file0
+SUCCESS: wrote 512 bytes to mnt/subdir/file0
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file1
+SUCCESS: wrote 512 bytes to mnt/subdir/file1
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file2
+SUCCESS: wrote 512 bytes to mnt/subdir/file2
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file3
+SUCCESS: wrote 512 bytes to mnt/subdir/file3
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file4
+SUCCESS: wrote 512 bytes to mnt/subdir/file4
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file5
+SUCCESS: wrote 512 bytes to mnt/subdir/file5
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file6
+SUCCESS: wrote 512 bytes to mnt/subdir/file6
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file7
+SUCCESS: wrote 512 bytes to mnt/subdir/file7
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file8
+SUCCESS: wrote 512 bytes to mnt/subdir/file8
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file9
+SUCCESS: wrote 512 bytes to mnt/subdir/file9
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file10
+SUCCESS: wrote 512 bytes to mnt/subdir/file10
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file11
+SUCCESS: wrote 512 bytes to mnt/subdir/file11
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file12
+SUCCESS: wrote 512 bytes to mnt/subdir/file12
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file13
+SUCCESS: wrote 512 bytes to mnt/subdir/file13
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file14
+SUCCESS: wrote 512 bytes to mnt/subdir/file14
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file15
+SUCCESS: wrote 512 bytes to mnt/subdir/file15
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file16
+SUCCESS: wrote 512 bytes to mnt/subdir/file16
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file17
+SUCCESS: wrote 512 bytes to mnt/subdir/file17
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file18
+SUCCESS: wrote 512 bytes to mnt/subdir/file18
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file19
+SUCCESS: wrote 512 bytes to mnt/subdir/file19
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file20
+SUCCESS: wrote 512 bytes to mnt/subdir/file20
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file21
+SUCCESS: wrote 512 bytes to mnt/subdir/file21
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file22
+SUCCESS: wrote 512 bytes to mnt/subdir/file22
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file23
+SUCCESS: wrote 512 bytes to mnt/subdir/file23
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file24
+SUCCESS: wrote 512 bytes to mnt/subdir/file24
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file25
+SUCCESS: wrote 512 bytes to mnt/subdir/file25
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file26
+SUCCESS: wrote 512 bytes to mnt/subdir/file26
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file27
+SUCCESS: wrote 512 bytes to mnt/subdir/file27
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file28
+SUCCESS: wrote 512 bytes to mnt/subdir/file28
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file29
+SUCCESS: wrote 512 bytes to mnt/subdir/file29
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file30
+SUCCESS: wrote 512 bytes to mnt/subdir/file30
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file31
+SUCCESS: wrote 512 bytes to mnt/subdir/file31
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file32
+SUCCESS: wrote 512 bytes to mnt/subdir/file32
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file33
+SUCCESS: wrote 512 bytes to mnt/subdir/file33
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file34
+SUCCESS: wrote 512 bytes to mnt/subdir/file34
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file35
+SUCCESS: wrote 512 bytes to mnt/subdir/file35
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file36
+SUCCESS: wrote 512 bytes to mnt/subdir/file36
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file37
+SUCCESS: wrote 512 bytes to mnt/subdir/file37
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file38
+SUCCESS: wrote 512 bytes to mnt/subdir/file38
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file39
+SUCCESS: wrote 512 bytes to mnt/subdir/file39
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file40
+SUCCESS: wrote 512 bytes to mnt/subdir/file40
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file41
+SUCCESS: wrote 512 bytes to mnt/subdir/file41
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file42
+SUCCESS: wrote 512 bytes to mnt/subdir/file42
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file43
+SUCCESS: wrote 512 bytes to mnt/subdir/file43
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file44
+SUCCESS: wrote 512 bytes to mnt/subdir/file44
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file45
+SUCCESS: wrote 512 bytes to mnt/subdir/file45
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file46
+SUCCESS: wrote 512 bytes to mnt/subdir/file46
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file47
+SUCCESS: wrote 512 bytes to mnt/subdir/file47
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file48
+SUCCESS: wrote 512 bytes to mnt/subdir/file48
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file49
+SUCCESS: wrote 512 bytes to mnt/subdir/file49
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file50
+SUCCESS: wrote 512 bytes to mnt/subdir/file50
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file51
+SUCCESS: wrote 512 bytes to mnt/subdir/file51
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file52
+SUCCESS: wrote 512 bytes to mnt/subdir/file52
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file53
+SUCCESS: wrote 512 bytes to mnt/subdir/file53
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file54
+SUCCESS: wrote 512 bytes to mnt/subdir/file54
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file55
+SUCCESS: wrote 512 bytes to mnt/subdir/file55
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file56
+SUCCESS: wrote 512 bytes to mnt/subdir/file56
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file57
+SUCCESS: wrote 512 bytes to mnt/subdir/file57
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file58
+SUCCESS: wrote 512 bytes to mnt/subdir/file58
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file59
+SUCCESS: wrote 512 bytes to mnt/subdir/file59
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file60
+SUCCESS: wrote 512 bytes to mnt/subdir/file60
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file61
+SUCCESS: wrote 512 bytes to mnt/subdir/file61
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file62
+SUCCESS: wrote 512 bytes to mnt/subdir/file62
+SUCCESS: closed file
+SUCCESS: created file mnt/subdir/file63
+SUCCESS: wrote 512 bytes to mnt/subdir/file63
+SUCCESS: closed file
+Checking directory
+SUCCESS: read directory mnt/subdir
+Removing 64 files
+SUCCESS: removed file mnt/subdir/file0
+SUCCESS: removed file mnt/subdir/file1
+SUCCESS: removed file mnt/subdir/file2
+SUCCESS: removed file mnt/subdir/file3
+SUCCESS: removed file mnt/subdir/file4
+SUCCESS: removed file mnt/subdir/file5
+SUCCESS: removed file mnt/subdir/file6
+SUCCESS: removed file mnt/subdir/file7
+SUCCESS: removed file mnt/subdir/file8
+SUCCESS: removed file mnt/subdir/file9
+SUCCESS: removed file mnt/subdir/file10
+SUCCESS: removed file mnt/subdir/file11
+SUCCESS: removed file mnt/subdir/file12
+SUCCESS: removed file mnt/subdir/file13
+SUCCESS: removed file mnt/subdir/file14
+SUCCESS: removed file mnt/subdir/file15
+SUCCESS: removed file mnt/subdir/file16
+SUCCESS: removed file mnt/subdir/file17
+SUCCESS: removed file mnt/subdir/file18
+SUCCESS: removed file mnt/subdir/file19
+SUCCESS: removed file mnt/subdir/file20
+SUCCESS: removed file mnt/subdir/file21
+SUCCESS: removed file mnt/subdir/file22
+SUCCESS: removed file mnt/subdir/file23
+SUCCESS: removed file mnt/subdir/file24
+SUCCESS: removed file mnt/subdir/file25
+SUCCESS: removed file mnt/subdir/file26
+SUCCESS: removed file mnt/subdir/file27
+SUCCESS: removed file mnt/subdir/file28
+SUCCESS: removed file mnt/subdir/file29
+SUCCESS: removed file mnt/subdir/file30
+SUCCESS: removed file mnt/subdir/file31
+SUCCESS: removed file mnt/subdir/file32
+SUCCESS: removed file mnt/subdir/file33
+SUCCESS: removed file mnt/subdir/file34
+SUCCESS: removed file mnt/subdir/file35
+SUCCESS: removed file mnt/subdir/file36
+SUCCESS: removed file mnt/subdir/file37
+SUCCESS: removed file mnt/subdir/file38
+SUCCESS: removed file mnt/subdir/file39
+SUCCESS: removed file mnt/subdir/file40
+SUCCESS: removed file mnt/subdir/file41
+SUCCESS: removed file mnt/subdir/file42
+SUCCESS: removed file mnt/subdir/file43
+SUCCESS: removed file mnt/subdir/file44
+SUCCESS: removed file mnt/subdir/file45
+SUCCESS: removed file mnt/subdir/file46
+SUCCESS: removed file mnt/subdir/file47
+SUCCESS: removed file mnt/subdir/file48
+SUCCESS: removed file mnt/subdir/file49
+SUCCESS: removed file mnt/subdir/file50
+SUCCESS: removed file mnt/subdir/file51
+SUCCESS: removed file mnt/subdir/file52
+SUCCESS: removed file mnt/subdir/file53
+SUCCESS: removed file mnt/subdir/file54
+SUCCESS: removed file mnt/subdir/file55
+SUCCESS: removed file mnt/subdir/file56
+SUCCESS: removed file mnt/subdir/file57
+SUCCESS: removed file mnt/subdir/file58
+SUCCESS: removed file mnt/subdir/file59
+SUCCESS: removed file mnt/subdir/file60
+SUCCESS: removed file mnt/subdir/file61
+SUCCESS: removed file mnt/subdir/file62
+SUCCESS: removed file mnt/subdir/file63
+Checking directory
+SUCCESS: read directory mnt/subdir
+SUCCESS: removed directory mnt/subdir
+SUCCESS: Correct inode count: 2
+SUCCESS: Correct data block count: 1

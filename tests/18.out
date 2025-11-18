@@ -1,0 +1,60 @@
+SUCCESS: initial statvfs succeeded
+SUCCESS: created file mnt/s18_00
+SUCCESS: wrote 1 bytes to mnt/s18_00
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_01
+SUCCESS: wrote 1 bytes to mnt/s18_01
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_02
+SUCCESS: wrote 1 bytes to mnt/s18_02
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_03
+SUCCESS: wrote 1 bytes to mnt/s18_03
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_04
+SUCCESS: wrote 1 bytes to mnt/s18_04
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_05
+SUCCESS: wrote 1 bytes to mnt/s18_05
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_06
+SUCCESS: wrote 1 bytes to mnt/s18_06
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_07
+SUCCESS: wrote 1 bytes to mnt/s18_07
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_08
+SUCCESS: wrote 1 bytes to mnt/s18_08
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_09
+SUCCESS: wrote 1 bytes to mnt/s18_09
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_10
+SUCCESS: wrote 1 bytes to mnt/s18_10
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_11
+SUCCESS: wrote 1 bytes to mnt/s18_11
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_12
+SUCCESS: wrote 1 bytes to mnt/s18_12
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_13
+SUCCESS: wrote 1 bytes to mnt/s18_13
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_14
+SUCCESS: wrote 1 bytes to mnt/s18_14
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_15
+SUCCESS: wrote 1 bytes to mnt/s18_15
+SUCCESS: closed file
+SUCCESS: created file mnt/s18_16
+SUCCESS: wrote 1 bytes to mnt/s18_16
+SUCCESS: closed file
+SUCCESS: subsequent statvfs succeeded
+SUCCESS: block size fields set (f_bsize=512, f_frsize=512)
+SUCCESS: f_blocks stable across ops (224)
+SUCCESS: f_files stable across ops (96)
+SUCCESS: f_ffree decreased
+SUCCESS: f_bfree decreased
+SUCCESS: consumed 17 inodes
+SUCCESS: consumed 19 data blocks

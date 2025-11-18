@@ -1,0 +1,8 @@
+SUCCESS: created file mnt/file.txt
+SUCCESS: wrote 2048 bytes to mnt/file.txt
+SUCCESS: closed file
+SUCCESS: opened mnt/file.txt for reading
+SUCCESS: read 512 bytes from mnt/file.txt
+SUCCESS: closed file
+SUCCESS: Correct inode count: 2
+SUCCESS: Correct data block count: 5

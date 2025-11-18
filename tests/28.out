@@ -1,0 +1,8 @@
+SUCCESS: created file mnt/t28_target
+SUCCESS: closed file
+SUCCESS: setxattr blue for file t28_target
+SUCCESS: ctime advanced after first color set
+SUCCESS: setxattr red for file t28_target
+SUCCESS: ctime advanced after second color set
+SUCCESS: read directory mnt
+SUCCESS: plain entry found for t28_target on non-ls readdir

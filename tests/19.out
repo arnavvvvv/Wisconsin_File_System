@@ -1,0 +1,10 @@
+SUCCESS: created file mnt/t19_file
+SUCCESS: closed file
+SUCCESS: created directory mnt/t19_dir
+SUCCESS: opened mnt for reading
+SUCCESS: closed file
+SUCCESS: File times at creation identical
+SUCCESS: Dir times at creation identical
+SUCCESS: created file mnt/t19_file2
+SUCCESS: closed file
+SUCCESS: Root directory times advanced on new dentry add

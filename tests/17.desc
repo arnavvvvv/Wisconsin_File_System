@@ -1,1 +1,1 @@
-ENOSPACE error checking. Create more than the maximum number of data blocks. 
+Rmdir test. Create a directory with several blocks worth of dentries. Unlink the files in the directory, rmdir, verify all data blocks associated with the directory have been freed.

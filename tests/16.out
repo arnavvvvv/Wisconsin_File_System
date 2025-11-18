@@ -1,0 +1,156 @@
+SUCCESS: created file mnt/file0
+SUCCESS: wrote 15872 bytes to mnt/file0
+SUCCESS: closed file
+SUCCESS: Correct inode count: 2
+SUCCESS: Correct data block count: 33
+SUCCESS: created file mnt/file1
+SUCCESS: wrote 15872 bytes to mnt/file1
+SUCCESS: closed file
+SUCCESS: Correct inode count: 3
+SUCCESS: Correct data block count: 65
+SUCCESS: created file mnt/file2
+SUCCESS: wrote 15872 bytes to mnt/file2
+SUCCESS: closed file
+SUCCESS: Correct inode count: 4
+SUCCESS: Correct data block count: 97
+SUCCESS: created file mnt/file3
+SUCCESS: wrote 15872 bytes to mnt/file3
+SUCCESS: closed file
+SUCCESS: Correct inode count: 5
+SUCCESS: Correct data block count: 129
+SUCCESS: created file mnt/file4
+SUCCESS: wrote 15872 bytes to mnt/file4
+SUCCESS: closed file
+SUCCESS: Correct inode count: 6
+SUCCESS: Correct data block count: 161
+SUCCESS: created file mnt/file5
+SUCCESS: wrote 15872 bytes to mnt/file5
+SUCCESS: closed file
+SUCCESS: Correct inode count: 7
+SUCCESS: Correct data block count: 193
+SUCCESS: created file mnt/file6
+SUCCESS: wrote 15872 bytes to mnt/file6
+SUCCESS: closed file
+SUCCESS: Correct inode count: 8
+SUCCESS: Correct data block count: 225
+SUCCESS: created file mnt/file7
+SUCCESS: wrote 15872 bytes to mnt/file7
+SUCCESS: closed file
+SUCCESS: Correct inode count: 9
+SUCCESS: Correct data block count: 257
+SUCCESS: created file mnt/file8
+SUCCESS: wrote 15872 bytes to mnt/file8
+SUCCESS: closed file
+SUCCESS: Correct inode count: 10
+SUCCESS: Correct data block count: 289
+SUCCESS: created file mnt/file9
+SUCCESS: wrote 15872 bytes to mnt/file9
+SUCCESS: closed file
+SUCCESS: Correct inode count: 11
+SUCCESS: Correct data block count: 321
+SUCCESS: created file mnt/file10
+SUCCESS: wrote 15872 bytes to mnt/file10
+SUCCESS: closed file
+SUCCESS: Correct inode count: 12
+SUCCESS: Correct data block count: 353
+SUCCESS: created file mnt/file11
+SUCCESS: wrote 15872 bytes to mnt/file11
+SUCCESS: closed file
+SUCCESS: Correct inode count: 13
+SUCCESS: Correct data block count: 385
+SUCCESS: created file mnt/file12
+SUCCESS: wrote 15872 bytes to mnt/file12
+SUCCESS: closed file
+SUCCESS: Correct inode count: 14
+SUCCESS: Correct data block count: 417
+SUCCESS: created file mnt/file13
+SUCCESS: wrote 15872 bytes to mnt/file13
+SUCCESS: closed file
+SUCCESS: Correct inode count: 15
+SUCCESS: Correct data block count: 449
+SUCCESS: created file mnt/file14
+SUCCESS: wrote 15872 bytes to mnt/file14
+SUCCESS: closed file
+SUCCESS: Correct inode count: 16
+SUCCESS: Correct data block count: 481
+SUCCESS: created file mnt/file15
+SUCCESS: wrote 15872 bytes to mnt/file15
+SUCCESS: closed file
+SUCCESS: Correct inode count: 17
+SUCCESS: Correct data block count: 513
+SUCCESS: created file mnt/file16
+SUCCESS: wrote 15872 bytes to mnt/file16
+SUCCESS: closed file
+SUCCESS: Correct inode count: 18
+SUCCESS: Correct data block count: 546
+SUCCESS: created file mnt/file17
+SUCCESS: wrote 15872 bytes to mnt/file17
+SUCCESS: closed file
+SUCCESS: Correct inode count: 19
+SUCCESS: Correct data block count: 578
+SUCCESS: created file mnt/file18
+SUCCESS: wrote 15872 bytes to mnt/file18
+SUCCESS: closed file
+SUCCESS: Correct inode count: 20
+SUCCESS: Correct data block count: 610
+SUCCESS: created file mnt/file19
+SUCCESS: wrote 15872 bytes to mnt/file19
+SUCCESS: closed file
+SUCCESS: Correct inode count: 21
+SUCCESS: Correct data block count: 642
+SUCCESS: created file mnt/file20
+SUCCESS: wrote 15872 bytes to mnt/file20
+SUCCESS: closed file
+SUCCESS: Correct inode count: 22
+SUCCESS: Correct data block count: 674
+SUCCESS: created file mnt/file21
+SUCCESS: wrote 15872 bytes to mnt/file21
+SUCCESS: closed file
+SUCCESS: Correct inode count: 23
+SUCCESS: Correct data block count: 706
+SUCCESS: created file mnt/file22
+SUCCESS: wrote 15872 bytes to mnt/file22
+SUCCESS: closed file
+SUCCESS: Correct inode count: 24
+SUCCESS: Correct data block count: 738
+SUCCESS: created file mnt/file23
+SUCCESS: wrote 15872 bytes to mnt/file23
+SUCCESS: closed file
+SUCCESS: Correct inode count: 25
+SUCCESS: Correct data block count: 770
+SUCCESS: created file mnt/file24
+SUCCESS: wrote 15872 bytes to mnt/file24
+SUCCESS: closed file
+SUCCESS: Correct inode count: 26
+SUCCESS: Correct data block count: 802
+SUCCESS: created file mnt/file25
+SUCCESS: wrote 15872 bytes to mnt/file25
+SUCCESS: closed file
+SUCCESS: Correct inode count: 27
+SUCCESS: Correct data block count: 834
+SUCCESS: created file mnt/file26
+SUCCESS: wrote 15872 bytes to mnt/file26
+SUCCESS: closed file
+SUCCESS: Correct inode count: 28
+SUCCESS: Correct data block count: 866
+SUCCESS: created file mnt/file27
+SUCCESS: wrote 15872 bytes to mnt/file27
+SUCCESS: closed file
+SUCCESS: Correct inode count: 29
+SUCCESS: Correct data block count: 898
+SUCCESS: created file mnt/file28
+SUCCESS: wrote 15872 bytes to mnt/file28
+SUCCESS: closed file
+SUCCESS: Correct inode count: 30
+SUCCESS: Correct data block count: 930
+SUCCESS: created file mnt/file29
+SUCCESS: wrote 15872 bytes to mnt/file29
+SUCCESS: closed file
+SUCCESS: Correct inode count: 31
+SUCCESS: Correct data block count: 962
+SUCCESS: created file mnt/file30
+SUCCESS: wrote 15872 bytes to mnt/file30
+SUCCESS: closed file
+SUCCESS: Correct inode count: 32
+SUCCESS: Correct data block count: 994
+SUCCESS: read directory mnt

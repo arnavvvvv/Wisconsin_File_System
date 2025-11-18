@@ -1,0 +1,25 @@
+SUCCESS: initial statvfs succeeded
+SUCCESS: created file mnt/t26
+SUCCESS: wrote 512 bytes to mnt/t26
+SUCCESS: closed file
+SUCCESS: statvfs after create+write
+SUCCESS: block size fields set (f_bsize=512, f_frsize=512)
+SUCCESS: f_blocks stable across ops (224)
+SUCCESS: f_files stable across ops (96)
+SUCCESS: consumed 1 inode(s) after create
+SUCCESS: consumed 2 data block(s) after create
+SUCCESS: opened mnt/t26 for reading
+SUCCESS: read 8 bytes from mnt/t26
+SUCCESS: closed file
+SUCCESS: statvfs after read
+SUCCESS: read did not change free counts
+SUCCESS: opened mnt/t26 for writing
+SUCCESS: wrote 512 bytes to mnt/t26
+SUCCESS: closed file
+SUCCESS: statvfs after append
+SUCCESS: append consumed additional data blocks
+SUCCESS: statvfs after readdir
+SUCCESS: readdir did not change free counts
+SUCCESS: removed file mnt/t26
+SUCCESS: statvfs after unlink
+SUCCESS: unlink freed inode(s) and data block(s)

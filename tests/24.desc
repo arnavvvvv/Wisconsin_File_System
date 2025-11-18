@@ -1,1 +1,1 @@
-xattr user.color set/get/list/remove works and ctime updates appropriately
+Process named ls triggers colored output for colored entries

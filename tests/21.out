@@ -1,0 +1,9 @@
+SUCCESS: created file mnt/t21_file
+SUCCESS: wrote 2 bytes to mnt/t21_file
+SUCCESS: closed file
+SUCCESS: opened mnt/t21_file for writing
+SUCCESS: wrote 2 bytes to mnt/t21_file
+SUCCESS: closed file
+SUCCESS: mtime updated correctly on write
+SUCCESS: ctime updated correctly on write
+SUCCESS: atime unchanged on pure write

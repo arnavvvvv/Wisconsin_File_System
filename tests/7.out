@@ -1,0 +1,4 @@
+SUCCESS: created directory mnt/data4
+SUCCESS: created file mnt/data4/data.txt
+SUCCESS: closed file
+SUCCESS: removed file mnt/data4/data.txt

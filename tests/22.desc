@@ -1,1 +1,1 @@
-Write should update mtime and ctime; atime unchanged
+xattr user.color set/get/remove works and ctime updates appropriately

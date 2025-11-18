@@ -4,44 +4,42 @@
 #include <fcntl.h>
 #include "common/test.h"
 
-const int file_block_num = D_BLOCK + 3;
-
-const int expected_inode_count = 3;
-const int expected_data_block_count = 37;
+const int expected_inode_count = 96;
+const int expected_data_block_count = 6;
 
 int main() {
-  int filesize = file_block_num * BLOCK_SIZE;
-  char* buf1 = (char*)malloc(filesize);
-  generate_random_data(buf1, filesize);
-  char* buf2 = (char*)malloc(filesize);
-  generate_random_data(buf2, filesize);
-
   int ret;
-  CHECK(create_file("mnt/large1.txt"));
-  int fd1 = ret;
+  int num_item = 95;
 
-  CHECK(create_file("mnt/large2.txt"));
-  int fd2 = ret;
-
-  for (size_t i = 0; i < filesize; i += BLOCK_SIZE) {
-    CHECK(write_file_check(fd1, buf1 + i, filesize, "mnt/large1.txt", i));
-    CHECK(write_file_check(fd2, buf2 + i, filesize, "mnt/large2.txt", i));
+  char** filenames = (char**)calloc(num_item, sizeof(char*));
+  for (size_t i = 0; i < num_item; i++) {
+    filenames[i] = (char*)calloc(32, sizeof(char));
+    sprintf(filenames[i], "file%ld", i);
   }
 
-  CHECK(close_file(fd1));
-  CHECK(close_file(fd2));
+  for (size_t i = 0; i < num_item; i++) {
+    char* filename = (char*)calloc(32, sizeof(char));
+    sprintf(filename, "mnt/%s", filenames[i]);
+    CHECK(create_file(filename));
+  }
 
-  CHECK(open_file_read("mnt/large1.txt"));
-  fd1 = ret;
-  CHECK(read_file_check(fd1, buf1, filesize, "mnt/large1.txt", 0));
-  CHECK(close_file(fd1));
-  free(buf1);
+  char* filename = (char*)calloc(32, sizeof(char));
+  sprintf(filename, "mnt/%d", num_item);
+  int rc = open(filename, O_CREAT | O_WRONLY, 0666);
+  if (rc >= 0) {
+    printf(
+        "Expected to fail to create file because of running out of inodes: "
+        "%s\n",
+        filename);
+    return FAIL;
+  } else if (errno != ENOSPC) {
+    printf("Expected errno to be ENOSPC, but got %d\n", errno);
+    return FAIL;
+  } else if (errno == ENOSPC) {
+    printf("Correctly received ENOSPC when trying to create file: %s\n", filename);
+  }
 
-  CHECK(open_file_read("mnt/large2.txt"));
-  fd2 = ret;
-  CHECK(read_file_check(fd2, buf2, filesize, "mnt/large2.txt", 0));
-  CHECK(close_file(fd2));
-  free(buf2);
+  CHECK(read_dir_check("mnt", filenames, num_item));
 
   MAP_DISK();
 

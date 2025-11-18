@@ -1,0 +1,1 @@
+dd if=/dev/zero of=disk.img bs=1M count=1 >/dev/null 2>&1 && ./mkfs -d disk.img -i 96 -b 200 >/dev/null 2>&1; ./umount.sh mnt >/dev/null 2>&1 || true; ./wfs disk.img mnt -s & sleep 0.3; ./tests/8; rc=$?; ./umount.sh mnt || true; sleep 0.1; test $rc -eq 0

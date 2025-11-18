@@ -1,0 +1,5 @@
+SUCCESS: created directory mnt/data4
+SUCCESS: created file mnt/data4/data.txt
+SUCCESS: closed file
+SUCCESS: Correct inode count: 3
+SUCCESS: Correct data block count: 2

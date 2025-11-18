@@ -1,0 +1,8 @@
+SUCCESS: created file mnt/data11.txt
+SUCCESS: wrote 5 bytes to mnt/data11.txt
+SUCCESS: closed file
+SUCCESS: opened mnt/data11.txt for reading
+SUCCESS: read 5 bytes from mnt/data11.txt
+SUCCESS: closed file
+SUCCESS: Correct inode count: 2
+SUCCESS: Correct data block count: 2

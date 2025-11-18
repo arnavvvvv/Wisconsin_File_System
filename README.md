@@ -1,11 +1,11 @@
 # CS537 Project P6 – Mini WFS Filesystem
-
+---
 Welcome to the mini WFS (Wisconsin File System) project! We're going to build a small, block-based userspace filesystem similar to those you have seen in class such as FFS or ext2, from the ground up using FUSE. 
 
 The project has four incremental parts. Each part adds specific functionality. The final product supports file and directory operations, filesystem statistics, POSIX timestamps, and per-file color tagging via extended attributes (xattrs) with colored `ls` output.
 
 ## Objectives
-
+---
 - To understand how filesystem operations are implemented.
 - To implement a traditional block-based filesystem.
 - To learn to build a user-level filesystem using FUSE.
@@ -29,6 +29,7 @@ The project has four incremental parts. Each part adds specific functionality. T
 ```
 
 ## Build & Run Quick Start
+---
 
 To help you run your filesystem, we provided several scripts: 
 
@@ -57,7 +58,13 @@ $ ls mnt
 # This will likely fail or do nothing... because you haven't
 # implemented 'readdir' yet!
 ```
+
+Once you are done, make sure to unmount the disk file through:
+```sh
+$ ./unmount.sh mnt
+```
 ## Background: What is FUSE?
+---
 
 FUSE (Filesystem in Userspace) is a powerful framework that lets you create your own filesystems in user space, without having to modify the Linux kernel.
 
@@ -96,7 +103,7 @@ Our filesystem will have a superblock, inode and data block bitmaps, and inodes 
 
 Given `mkfs.c` tool creates this exact structure. Your `wfs.c` must read and write to it. The layout of a disk is shown below.
 
-![filesystem layout on disk](base_for_students/instructions/disk-layout.svg)
+![filesystem layout on disk](instructions/disk-layout.svg)
 
 - Superblock: Located at offset 0. This is the "map of maps." It tells you the total number of inodes and data blocks, and (most importantly) the on-disk offsets to the other sections.
 - Inode Bitmap (IBITMAP): A packed bitmap (1 bit per inode). If bit i is 1, inode i is in use
@@ -122,6 +129,7 @@ Good luck – build it step by step. FILE IT UP, then zoom out for the Big Pictu
 
 
 ## Useful Reading and References
+---
 
 * https://www.cs.hmc.edu/~geoff/classes/hmc.cs135.201001/homework/fuse/fuse_doc.html
 * https://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/html/index.html

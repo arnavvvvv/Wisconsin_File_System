@@ -1,1 +1,1 @@
-Changing user.color advances ctime; non-ls listing shows plain name
+Directory atime updates on readdir; mtime/ctime update on add/remove dentry

@@ -1,30 +1,22 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <string.h>
-
 #include "common/test.h"
 
+const int expected_inode_count = 3;
+const int expected_data_block_count = 2;
+
 int main() {
-  const char* paths[] = {"mnt/file0",       "mnt/file1",
-                         "mnt/dir0/file00", "mnt/dir0/file01",
-                         "mnt/dir1/file10", "mnt/dir1/file11"};
+  int ret;
+  CHECK(create_dir("mnt/data2"));
 
-  for (size_t i = 0; i < 6; i++) {
-    int ret;
-    CHECK(open_file_read(paths[i]));
-    int fd = ret;
+  CHECK(create_dir("mnt/data2/data3"));
 
-    printf("fd: %d\n", fd);
+  MAP_DISK();
 
-    const char* content = "content";
-    CHECK(read_file_check(fd, content, strlen(content), paths[i], 0));
-    
-    CHECK(close_file(fd));
-  }
+  CHECK_INODE_AND_BLOCK_COUNT(expected_inode_count, expected_data_block_count);
+
+  UNMAP_DISK();
 
   return PASS;
 }

@@ -4,10 +4,10 @@ CC=gcc
 # Define any compile-time flags
 CFLAGS=-Wall -g
 # Define the source files
-SOURCES:=$(shell echo {2..28}.c)
+SOURCES:=$(shell echo {1..28}.c)
 # Define the binaries to create (with the same name as the source file but no extension)
 OBJECTS:=$(SOURCES:.c=.o)
-BINARIES:=$(SOURCES:.c=) mkfs_check
+BINARIES:=$(SOURCES:.c=)
 
 $(info $(BINARIES))
 

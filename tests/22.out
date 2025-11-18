@@ -1,0 +1,8 @@
+SUCCESS: created file mnt/t22_file
+SUCCESS: closed file
+SUCCESS: setxattr to blue
+SUCCESS: getxattr returned blue
+SUCCESS: ctime increased after setxattr
+SUCCESS: removexattr
+SUCCESS: getxattr returned none after removexattr
+SUCCESS: ctime increased after removexattr

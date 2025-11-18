@@ -1,61 +1,41 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include "common/test.h"
 
-const int file_block_num = 1;
 
 int main() {
-  int filesize = file_block_num * BLOCK_SIZE;
   int ret;
-  int item_num = 64;
+  // Create a file and directory and then stat them
+  CHECK(create_file("mnt/t19_file"));
+  int fd = ret; CHECK(close_file(fd));
+  CHECK(create_dir("mnt/t19_dir"));
 
-  char** filenames = (char**)calloc(item_num, sizeof(char*));
-  for (size_t i = 0; i < item_num; i++) {
-    filenames[i] = (char*)calloc(item_num, sizeof(char));
-    sprintf(filenames[i], "file%ld", i);
-  }
+  struct stat st_file, st_dir, st_root_before, st_root_after;
+  // Stat root before further modification (after creations root already changed once)
+  CHECK(open_file_read("mnt")); // open to ensure mount exists
+  int dirfd = ret; CHECK(close_file(dirfd));
+  if (stat("mnt", &st_root_before) != 0) { perror("stat root before"); return FAIL; }
+  if (stat("mnt/t19_file", &st_file) != 0) { perror("stat file"); return FAIL; }
+  if (stat("mnt/t19_dir", &st_dir) != 0) { perror("stat dir"); return FAIL; }
 
-  CHECK(create_file("mnt/dummy"));
-  CHECK(create_dir("mnt/subdir"));
+  // Basic invariants on creation
+  if (!(st_file.st_atime == st_file.st_mtime && st_file.st_mtime == st_file.st_ctime)) {
+    printf("File initial times not identical: at=%ld mt=%ld ct=%ld\n", st_file.st_atime, st_file.st_mtime, st_file.st_ctime); return FAIL; }
+  else
+    printf("SUCCESS: File times at creation identical\n");
+  if (!(st_dir.st_atime == st_dir.st_mtime && st_dir.st_mtime == st_dir.st_ctime)) {
+    printf("Dir initial times not identical: at=%ld mt=%ld ct=%ld\n", st_dir.st_atime, st_dir.st_mtime, st_dir.st_ctime); return FAIL; }
+  else
+    printf("SUCCESS: Dir times at creation identical\n");
 
-  char* buf = (char*)malloc(filesize);
-
-  printf("Creating %d files\n", item_num);
-
-  for (int i = 0; i < item_num; i++) {
-    char* filename = (char*)calloc(32, sizeof(char));
-    sprintf(filename, "mnt/subdir/%s", filenames[i]);
-    CHECK(create_file(filename));
-    int fd = ret;
-    generate_random_data(buf, filesize);
-    CHECK(write_file_check(fd, buf, filesize, filename, 0));
-    CHECK(close_file(fd));
-  }
-
-  printf("Checking directory\n");
-
-  CHECK(read_dir_check("mnt/subdir", filenames, item_num));
-
-  printf("Removing %d files\n", item_num);
-
-  for (int i = 0; i < item_num; i++) {
-    char* filename = (char*)calloc(32, sizeof(char));
-    sprintf(filename, "mnt/subdir/%s", filenames[i]);
-    CHECK(remove_file(filename));
-  }
-
-  printf("Checking directory\n");
-
-  CHECK(read_dir_check("mnt/subdir", NULL, 0));
-
-  CHECK(remove_dir("mnt/subdir"));
-
-  MAP_DISK();
-  CHECK_INODE_AND_BLOCK_COUNT(2, 1);  // Note that the root directory is not
-                                      // empty: file "dummy" is still there
-  UNMAP_DISK();
+  // Touch parent by another create to see mtime/ctime bump
+  CHECK(create_file("mnt/t19_file2")); fd = ret; CHECK(close_file(fd));
+  if (stat("mnt", &st_root_after) != 0) { perror("stat root after"); return FAIL; }
+  if (!(st_root_after.st_mtime >= st_root_before.st_mtime && st_root_after.st_ctime >= st_root_before.st_ctime)) {
+    printf("Root directory times did not advance on new dentry add\n"); return FAIL; }
+  else
+    printf("SUCCESS: Root directory times advanced on new dentry add\n");
 
   return PASS;
 }

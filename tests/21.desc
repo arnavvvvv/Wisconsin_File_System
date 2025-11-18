@@ -1,1 +1,1 @@
-Read should update atime only; mtime/ctime unchanged
+Write should update mtime and ctime; atime unchanged

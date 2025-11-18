@@ -4,8 +4,6 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NONE='\033[0m'
 
-ignore_output_list="3,7,8"
-
 # run_test testdir testnumber
 run_test () {
     local testdir=$1
@@ -15,9 +13,7 @@ run_test () {
     # pre: execute this after before the test is done, to set up
     local prefile=$testdir/$testnum.pre
     if [[ -f $prefile ]]; then
-	eval $(cat $prefile)
-	echo $? > tests-out/$testnum.pre-rc
-	    
+    bash $prefile >> /dev/null 2>&1
 	if (( $verbose == 1 )); then
 	    echo -n "pre-test:  "
 	    cat $prefile
@@ -28,12 +24,8 @@ run_test () {
 	echo -n "test:      "
 	cat $testfile
     fi
-    chmod a+x $testfile
     timeout 15 /bin/bash $testfile > tests-out/$testnum.out 2> tests-out/$testnum.err
-    
-    #timeout 5m bash -c "eval \$(cat $testfile)" > tests-out/$testnum.out 2> tests-out/$testnum.err
-
-    echo $? > tests-out/$testnum.run-rc
+    echo $? > tests-out/$testnum.rc
 
     # post: execute this after the test is done, to clean up
     local postfile=$testdir/$testnum.post
@@ -94,46 +86,35 @@ run_and_check () {
 	fi
 	exit 0
     fi
-    if (( $verbose == 1 )); then
-	echo -n -e "running test $testnum: "
-	cat $testdir/$testnum.desc
-    fi
+    echo -n -e "running test $testnum: "
+    cat $testdir/$testnum.desc
     run_test $testdir $testnum $verbose
-    prerccheck=$(check_test $testdir $testnum $contrunning pre-rc)
-    runrccheck=$(check_test $testdir $testnum $contrunning run-rc)
+    rccheck=$(check_test $testdir $testnum $contrunning rc)
     outcheck=$(check_test $testdir $testnum $contrunning out)
     errcheck=$(check_test $testdir $testnum $contrunning err)
     othercheck=0
     if [[ -f $testdir/$testnum.other ]]; then
 	othercheck=$(check_test $testdir $testnum $contrunning other)
     fi
-
-    if echo "$ignore_output_list" | grep -q "\\b$testnum\\b"; then
-	outcheck=0
-    fi
-    
     # echo "results: outcheck:$outcheck errcheck:$errcheck"
-    if (( $prerccheck == 0 )) && (( $runrccheck == 0 )) && (( $outcheck == 0 )) && (( $errcheck == 0 )) && (( $othercheck == 0 )); then
-	    echo -e "test $testnum: ${GREEN}passed${NONE}"
-	    if (( $verbose == 1 )); then
-	        echo ""
-	    fi
+    if (( $rccheck == 0 )) && (( $outcheck == 0 )) && (( $errcheck == 0 )) && (( $othercheck == 0 )); then
+	echo -e "test $testnum: ${GREEN}passed${NONE}"
+	if (( $verbose == 1 )); then
+	    echo ""
+	fi
     else
-	    if (( $prerccheck == 1 )); then
-	        print_error_message $testnum $contrunning pre-rc
-	    fi
-	    if (( $runrccheck == 1 )); then
-	        print_error_message $testnum $contrunning run-rc
-	    fi
-	    if (( $outcheck == 1 )); then
-	        print_error_message $testnum $contrunning out
-	    fi
-	    if (( $errcheck == 1 )); then
-	        print_error_message $testnum $contrunning err
-	    fi
-	    if (( $othercheck == 1 )); then
-	        print_error_message $testnum $contrunning other
-	    fi
+	if (( $rccheck == 1 )); then
+	    print_error_message $testnum $contrunning rc
+	fi
+	if (( $outcheck == 1 )); then
+	    print_error_message $testnum $contrunning out
+	fi
+	if (( $errcheck == 1 )); then
+	    print_error_message $testnum $contrunning err
+	fi
+	if (( $othercheck == 1 )); then
+	    print_error_message $testnum $contrunning other
+	fi
     fi
 }
 

@@ -1,0 +1,9 @@
+SUCCESS: created directory mnt/t27_dir
+SUCCESS: dir atime updated correctly on readdir
+SUCCESS: dir mtime unchanged on readdir
+SUCCESS: dir ctime unchanged on readdir
+SUCCESS: created file mnt/t27_dir/child
+SUCCESS: closed file
+SUCCESS: dir mtime/ctime updated correctly on add dentry
+SUCCESS: removed file mnt/t27_dir/child
+SUCCESS: dir mtime/ctime updated correctly on remove dentry

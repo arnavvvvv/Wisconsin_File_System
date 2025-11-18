@@ -4,43 +4,30 @@
 #include <fcntl.h>
 #include "common/test.h"
 
-const int expected_inode_count = 2;
-const int expected_data_block_count = 5;
+const int expected_inode_count = 65;
+const int expected_data_block_count = 4;
 
 int main() {
-  int filesize = 4 * BLOCK_SIZE;
-  char* buf = (char*)malloc(filesize);
-  generate_random_data(buf, filesize);
-
   int ret;
-  CHECK(create_file("mnt/file.txt"));
-  int fd = ret;
+  int num_item = 64;
 
-  CHECK(write_file_check(fd, buf, filesize, "mnt/file.txt", 0));
-  CHECK(close_file(fd));
+  char** filenames = (char**)calloc(num_item, sizeof(char*));
+  for (size_t i = 0; i < num_item; i++)
+  {
+    filenames[i] = (char*)calloc(32, sizeof(char));
+    sprintf(filenames[i], "file%ld", i);
+  }
+  
 
-  CHECK(open_file_read("mnt/file.txt"));
-  fd = ret;
-  CHECK(read_file_check(fd, buf, filesize, "mnt/file.txt", 0));
-  CHECK(close_file(fd));
+  for (size_t i = 0; i < num_item; i++)
+  {
+    char* filename = (char*)calloc(num_item, sizeof(char));
+    sprintf(filename, "mnt/%s", filenames[i]);
+    CHECK(create_file(filename));
+  }
 
-  CHECK(open_file_write("mnt/file.txt"));
-  fd = ret;
-  char* buf_overwrite = (char*)malloc(BLOCK_SIZE);
-  generate_random_data(buf_overwrite, BLOCK_SIZE);
-  ssize_t offset = BLOCK_SIZE / 2;
-  CHECK(
-      write_file_check(fd, buf_overwrite, BLOCK_SIZE, "mnt/file.txt", offset));
-  CHECK(close_file(fd));
-
-  CHECK(open_file_read("mnt/file.txt"));
-  fd = ret;
-  memcpy(buf + offset, buf_overwrite, BLOCK_SIZE);
-  CHECK(read_file_check(fd, buf, filesize, "mnt/file.txt", 0));
-  CHECK(close_file(fd));
-
-  free(buf_overwrite);
-  free(buf);
+  CHECK(read_dir_check("mnt", filenames, num_item));
+  
 
   MAP_DISK();
 

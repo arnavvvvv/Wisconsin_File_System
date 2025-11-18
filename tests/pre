@@ -1,0 +1,7 @@
+# Global pre-test initialization: ensure mount directory and build binaries
+# This file is sourced by run-tests.sh; avoid exiting the shell unexpectedly.
+
+# Create mount point if missing
+if [ ! -d mnt ]; then
+	mkdir -p mnt || { echo "ERROR: failed to create mnt" >&2; return 1 2>/dev/null || exit 1; }
+fi

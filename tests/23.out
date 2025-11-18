@@ -1,0 +1,6 @@
+SUCCESS: created file mnt/t23_a
+SUCCESS: closed file
+SUCCESS: created file mnt/t23_b
+SUCCESS: closed file
+SUCCESS: setxattr red
+SUCCESS: read directory mnt

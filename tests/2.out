@@ -1,0 +1,4 @@
+SUCCESS: created directory mnt/data2
+SUCCESS: created directory mnt/data2/data3
+SUCCESS: Correct inode count: 3
+SUCCESS: Correct data block count: 2
