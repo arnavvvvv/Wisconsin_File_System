@@ -31,7 +31,7 @@ The project has four incremental parts. Each part adds specific functionality. T
 
 ## Build & Run Quick Start
 ---
-Ensure you build a new docker image with additional packages from [CS537 Docker setup guide](https://git.doit.wisc.edu/cdis/cs/courses/cs537/useful-resources/cs537-docker) and run that image for this project.
+#### IMPORTANT - Ensure you build a new docker image with additional packages from [CS537 Docker setup guide](https://git.doit.wisc.edu/cdis/cs/courses/cs537/useful-resources/cs537-docker) and run that image for this project.
 
 To help you run your filesystem, we provided several scripts: 
 
@@ -121,7 +121,7 @@ Given `mkfs.c` tool creates this exact structure. Your `wfs.c` must read and wri
 
 Let's Get Building!
 
-Right now, your filesystem doesn't do anything. The wfs.c file is just a skeleton. Your first goal would be to successfully mount the filesystem by imlementing certain function stubs. Thereafter, every FUSE operation you try (like ls, mkdir, touch) will fail because its function stub just returns -ENOSYS (Function Not Implemented) and you will proceed to implement them.
+At this stage, the filesystem does nothing—wfs.c is only a scaffold. Your first milestone is to implement the minimal hooks required to mount it. After mounting, common operations (e.g., ls, mkdir, touch) will still fail with -ENOSYS because their handlers are stubs; you will implement them incrementally.
 
 Your job is to implement all of these functions, one part at a time.
 

@@ -1,9 +1,9 @@
-# Part 4 – Colour Colour which Colour do you choose? (xattrs + Colored ls)
+# Part 4 – Color Color which Color do you choose? (xattrs + Colored ls)
 ---
 
 ## Objective
 ---
-Welcome to the final part. Your goal is to add a per-file "color" tag. This is a two-part challenge:
+Welcome to the final part. Your goal is to add a per-file "color" tag (just like color tagging files in MacOS). This is a two-part challenge:
 
 - Store & Expose: You'll store this tag inside the inode and expose it to userspace using the standard "extended attribute" (xattr) interface.
 
@@ -24,7 +24,9 @@ Welcome to the final part. Your goal is to add a per-file "color" tag. This is a
 
 `getxattr`: Called by the user to read an attribute (e.g., getfattr -n user.color \<filepath>).
 
-`removexattr`: Called by the user to delete an attribute. Your job is to wire these callbacks to read and write your new `inode->color` field.
+`removexattr`: Called by the user to delete an attribute. 
+
+Your job is to wire these callbacks to read and write your new `inode->color` field.
 
 ### The ls "Magic Trick" (Dynamic readdir)
 
@@ -47,7 +49,7 @@ If command is anything else: You will send the normal, "clean" filename (e.g., "
 ## Implementation Guidance
 ---
 
-Add to `wfs_inode:` Add your new color field to `struct wfs_inode` in wfs.h. Don't forget to initialize it to `WFS_COLOR_NONE` in mkfs.c and `fill_inode()`.
+Add to `wfs_inode:` Add your new color field to `struct wfs_inode` in wfs.h. Don't forget to initialize it to `WFS_COLOR_NONE` in mkfs.c and `fillin_inode()`.
 
 Implement xattr Callbacks: Implement the .setxattr, .getxattr, and .removexattr functions in wfs.c. Use the provided `parse_color_name` and `wfs_color_from_code` helpers. Use the `wfs_color_t` enum for different colors and don't modify this enum.
 
@@ -60,7 +62,7 @@ Use getfattr -n user.color /mnt/somefile and see it return "red".
 
 Run ls /mnt. The file should be ANSI coded red.
 
-Run ls -N --show-control-chars to see the file coloured red.
+Run ls -N --show-control-chars to see the file colored red.
 
 ### Final Output:
-![filesystem layout on disk](sample_coloring_output.png)
+![directory with colored files](sample_coloring_output.png)
