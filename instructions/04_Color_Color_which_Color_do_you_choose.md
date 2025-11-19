@@ -64,5 +64,5 @@ Run ls /mnt. The file should be ANSI coded red.
 
 Run ls -N --show-control-chars to see the file colored red.
 
-### Final Output:
+### Example Output:
 ![directory with colored files](sample_coloring_output.png)
