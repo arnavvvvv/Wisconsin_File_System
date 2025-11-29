@@ -98,7 +98,14 @@ run_and_check () {
 	exit 0
     fi
     echo -n -e "running test $testnum: "
-    cat "$PROJECT_ROOT/$testdir/$testnum.desc"
+    # Descriptions may be in the expected-results dir ($expecteddir).
+    if [[ -f "$PROJECT_ROOT/$expecteddir/$testnum.desc" ]]; then
+        cat "$PROJECT_ROOT/$expecteddir/$testnum.desc"
+    elif [[ -f "$PROJECT_ROOT/$testdir/$testnum.desc" ]]; then
+        cat "$PROJECT_ROOT/$testdir/$testnum.desc"
+    else
+        echo "(no description)"
+    fi
     run_test $testdir $testnum $verbose
     rccheck=$(check_test $testnum $contrunning rc)
     outcheck=$(check_test $testnum $contrunning out)
