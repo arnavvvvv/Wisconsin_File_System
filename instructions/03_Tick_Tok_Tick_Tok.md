@@ -4,7 +4,7 @@ Extend your inode with three timestamps: `atim` (last access), `mtim` (last cont
 
 ## Objective
 ---
-- Creation: initialize all three to “now” when a file or directory is first made.
+- Creation: initialize all three to “now” (current time) when a file or directory is first made.
 - Reporting: `getattr` returns these values; it never changes them.
 - Reading: when file contents are actually read, advance the file’s access time.
 - Listing directories: after producing a directory listing, advance that directory’s access time.

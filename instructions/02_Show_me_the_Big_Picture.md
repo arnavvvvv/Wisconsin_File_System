@@ -4,7 +4,7 @@
 ## Objective
 ---
 
-Your goal is to report aggregate filesystem statistics. This is the function that answers the user's question, "How much space is free on this disk?" It's the powerhouse behind command-line tools like `df (disk free)`.
+Your goal is to report aggregate filesystem statistics. This is the function that answers the user's question, "How much space is free on this disk?" It's the powerhouse behind command-line tools like `df -h (disk free)` and `stat -f`.
 
 ## Key Concepts
 ---
@@ -28,3 +28,9 @@ Example attributes to be filled in statvfs:
 - `f_bfree`/`f_bavail` = number of free data blocks.
 
 Creating files reduces `f_ffree`; writing allocating blocks reduces `f_bfree`.
+
+## Sanity Check
+---
+
+You should be able to call `stat -f` and `df -h` on your mountpoint to get accurate filesystem statistics as below:
+![filesystem statistics output](sample_stat_output.png)
