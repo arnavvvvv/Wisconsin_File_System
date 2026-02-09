@@ -143,4 +143,3 @@ Good luck – build it step by step. FILE IT UP, then zoom out for the Big Pictu
 * https://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/html/index.html
 * http://libfuse.github.io/doxygen/index.html
 * https://github.com/fuse4x/fuse/tree/master/example
-* `/usr/include/asm-generic/errno-base.h`
