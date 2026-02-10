@@ -1,5 +1,5 @@
 # CS537 Project P6 – Mini WFS
----
+
 Welcome to the mini WFS (Wisconsin File System) project! We're going to build a small, block-based userspace filesystem similar to those you have seen in class such as FFS or ext2, from the ground up using FUSE. 
 
 The project has four incremental parts. Each part adds specific functionality. The final product supports file and directory operations, filesystem statistics, POSIX timestamps, and per-file color tagging via extended attributes (xattrs) with colored `ls` output.
