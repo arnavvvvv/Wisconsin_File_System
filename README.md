@@ -5,7 +5,7 @@ Welcome to the mini WFS (Wisconsin File System) project! We're going to build a 
 The project has four incremental parts. Each part adds specific functionality. The final product supports file and directory operations, filesystem statistics, POSIX timestamps, and per-file color tagging via extended attributes (xattrs) with colored `ls` output.
 
 ## Objectives
----
+
 - To understand how filesystem operations are implemented.
 - To implement a traditional block-based filesystem.
 - To learn to build a user-level filesystem using FUSE.
@@ -30,7 +30,7 @@ The project has four incremental parts. Each part adds specific functionality. T
 ```
 
 ## Build & Run Quick Start
----
+
 #### IMPORTANT - Ensure you build a new docker image with additional packages from [CS537 Docker setup guide](https://git.doit.wisc.edu/cdis/cs/courses/cs537/useful-resources/cs537-docker) and run that image for this project.
 
 To help you run your filesystem, we provided several scripts: 
@@ -72,7 +72,6 @@ root@fbaca27f57d2:/cs537-projects/p6-base# ./tests/run-tests.sh
 ```
 
 ## Background: What is FUSE?
----
 
 FUSE (Filesystem in Userspace) is a powerful framework that lets you create your own filesystems in user space, without having to modify the Linux kernel.
 
@@ -137,7 +136,6 @@ Good luck – build it step by step. FILE IT UP, then zoom out for the Big Pictu
 
 
 ## Useful Reading and References
----
 
 * https://www.cs.hmc.edu/~geoff/classes/hmc.cs135.201001/homework/fuse/fuse_doc.html
 * https://www.cs.nmsu.edu/~pfeiffer/fuse-tutorial/html/index.html
